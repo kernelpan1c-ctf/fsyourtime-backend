@@ -1,11 +1,13 @@
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 
-var db = require('../models/Module.js');
-var studentdb = require('../models/Student.js');
+//var studentdb = require('../models/Student.js');
+var moduledb = require('../models/Module.js');
+var studdb = require('../models/Student.js');
+//var identdb = require('../models/Identification.js');
 
 exports.getModule = function (req, res) {
   var id = req.params.id;
-    db.moduleModel.findOne({_id: id}, function (err, module) {
+    moduledb.moduleModel.findOne({_id: id}, function (err, module) {
         if (err || module == undefined) {
             console.log(err);
             return res.sendStatus(401);
@@ -15,7 +17,7 @@ exports.getModule = function (req, res) {
 };
 
 exports.checkModules = function (paramStudent){
-    studentdb.studentModel.findById(paramStudent._id, function(err, student){
+    studdb.studentModel.findById(paramStudent._id, function (err, student) {
         if (err) {
             console.log(err);
             return 0;
@@ -31,7 +33,7 @@ exports.checkModules = function (paramStudent){
 };
 
 exports.createModule = function (req, res) {
-    var module = new db.moduleModel(req.body);
+    var module = new moduledb.moduleModel(req.body);
     var studentid = req.matricularnr;
 // TO do: module array per http -> only one api request for multiple modules
     module.save(function (err){
@@ -45,7 +47,7 @@ exports.createModule = function (req, res) {
         });
 
 // Pushing new module reference into student data to keep references in sync
-    studentdb.studentModel.findOne({_id: studentid}, function (err, student) {
+    studdb.studentModel.findOne({_id: studentid}, function (err, student) {
         if (err || student == undefined) {
             console.log(err);
             return res.sendStatus(401);
@@ -61,14 +63,14 @@ exports.deleteModule = function (req, res) {
     var studentid = req.params.studentid;
     var moduleid = req.params.id;
 
-    db.moduleModel.remove({_id : moduleid}, function(err){
+    moduledb.moduleModel.remove({_id: moduleid}, function (err) {
         if (err){
             console.log(err);
             return res.sendStatus(401);
         }
     });
     //Keeping references in sync -> delete objectid in students:
-    studentdb.studentModel.find({modules: moduleid}, function (err, students){
+    studdb.studentModel.find({modules: moduleid}, function (err, students) {
         if (err || students == undefined) {
             console.log(err);
             return res.sendStatus(401);
@@ -83,5 +85,66 @@ exports.deleteModule = function (req, res) {
 };
 
 exports.updateModule = function (req, res) {
-console.log("update");
+    console.log("update");
+};
+
+exports.getmyModules = function (req, res) {
+    // Student can view a list of his modules
+    // Result contains all information about the modules, however, not all must be used
+    var session = req.headers['jsessionid'];
+    // req.sessionID ??
+    var matricularnr;
+    identdb.findOne({jsession: session}, function (err, identification) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            matricularnr = identification.relmatricularnr;
+        }
+    });
+    // find out which student is logged in
+    var modulelist = [];
+    studdb.studentModel.findOne({_id: matricularnr}, function (err, student) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                modulelist = student.modules
+            }
+        }
+    );
+    moduledb.moduleModel.find({_id: {$in: modulelist}}, function (err, modules) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(modules)
+        }
+    });
+};
+
+exports.getModulebyId = function (req, res) {
+    // Get a Module by ID
+    // Result contains all information about the module, however, not all must be used
+    moduledb.moduleModel.findbyId(req.params.id, function (err, module) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(module)
+        }
+    });
+};
+
+exports.getModulebyName = function (req, res) {
+    // Get a Module by its name
+    // Result contains all information about the module, however, not all must be used
+    moduledb.moduleModel.findOne({name: req.params.name}, function (err, module) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(module)
+        }
+    });
 };
