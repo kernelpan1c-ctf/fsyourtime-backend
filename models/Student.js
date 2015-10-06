@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var studentSchema = mongoose.Schema(
     {
         // _id = matricularnr
-        _id: {type: Number, required: true, unique: true},
+        //_id: {type: Number, required: true, unique: true},
         course: {type: String, ref: 'Course'},
         modules: [{type: String, ref: 'Module'}],
         efforts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Effort'}],

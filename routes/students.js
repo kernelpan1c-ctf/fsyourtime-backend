@@ -36,7 +36,7 @@ exports.dummy = function (req, res) {
     var effortCatID = [1,2,3];
 
     // Effort Kategorien anlegen
-    for (i = 0; i < effortCat.length; i++){
+    for (var i = 0; i < effortCat.length; i++) {
         var eCat = new effortCatdb.effCategoryModel;
         eCat._id = effortCatID[i];
         eCat.name = effortCat[i];
@@ -53,7 +53,7 @@ exports.dummy = function (req, res) {
 
 
     // module anlegen
-    for (i = 0; i < moduleCodes.length; i++){
+    for (var i = 0; i < moduleCodes.length; i++) {
         var mod = new moduledb.moduleModel();
         mod._id = moduleCodes[i];
         mod.name = modules[i];
@@ -73,7 +73,7 @@ exports.dummy = function (req, res) {
     }
 
     //Kurse 2012 anlegen
-    for (i = 0; i < kurse12.length; i++) {
+    for (var i = 0; i < kurse12.length; i++) {
         var course = new coursedb.courseModel();
         course._id = kurse12[i];
         course.name = kursNamen[i];
@@ -90,7 +90,7 @@ exports.dummy = function (req, res) {
     }
 
     //Kurse 2013 anlegen
-    for (i = 0; i < kurse13.length; i++) {
+    for (var i = 0; i < kurse13.length; i++) {
         var course = new coursedb.courseModel();
         course._id = kurse13[i];
         course.name = kursNamen[i];
@@ -107,7 +107,7 @@ exports.dummy = function (req, res) {
     }
 
     //Studenten 2012 anlegen
-    for (i = 0; i < 25; i++){
+    for (var i = 0; i < 25; i++) {
         var reqStudent = new studdb.studentModel();
         reqStudent._id = Math.floor((Math.random() * 1000) + 1);
         reqStudent.course = kurse12[Math.floor(Math.random() * kurse12.length)];
@@ -145,7 +145,7 @@ exports.dummy = function (req, res) {
         });
     }
     //Studenten 2013 anlegen
-    for (i = 0; i < 25; i++){
+    for (var i = 0; i < 25; i++) {
         var reqStudent = new studdb.studentModel();
         reqStudent._id = Math.floor((Math.random() * 1000) + 1);
         reqStudent.course = kurse13[Math.floor(Math.random() * kurse13.length)];
@@ -198,7 +198,7 @@ exports.checkStudent = function (req, res) {
     });
 };
 
-exports.getmyInfo = function(req,res){
+exports.getMyInfo = function(req,res){
     // Student can view his own, full information
     // Course and Modules are displayed by name, not by ID (easy to read)
     var session = req.headers['jsessionid'];

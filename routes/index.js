@@ -17,10 +17,10 @@ router.get('/', function(req, res, next) {
 router.post('/api/checkStudent/:id', students.checkStudent);
 router.get('/api/dummy', students.dummy);
 router.post('/api/clear', students.clear);
-router.get('/api/getmyInfo', students.getmyInfo);
-router.get('/api/getmyModules', modules.getmyModules);
-router.get('/api/getModulebyId/:id', modules.getModulebyId);
-router.get('/api/getModulebyName/:name', modules.getModulebyName);
+router.get('/api/getMyInfo', students.getmyInfo);
+router.get('/api/getMyModules', modules.getmyModules);
+router.get('/api/getModuleById/:id', modules.getModulebyId);
+router.get('/api/getModuleByName/:name', modules.getModulebyName);
 router.get('/api/getMyEfforts', efforts.getMyEfforts);
 router.get('/api/getEffortById/:id', efforts.getEffortById);
 router.get('/api/getEffortsByModule/:moduleid', efforts.getEffortsByModule);
