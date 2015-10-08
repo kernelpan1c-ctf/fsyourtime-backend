@@ -166,13 +166,14 @@ exports.dummy = function (req, res) {
 };
 
 exports.checkStudent = function (req, res) {
-    var studentid = req.params.id;
+    console.log('I was just called :O');
+    var studentID = req.params.id;
     var reqStudent = new studdb.studentModel(req.body);
 
-    console.log("studentid: " + studentid);
-    console.log("reqstudentid: " + reqStudent._id);
+    console.log("studentid: " + studentID);
+    //console.log("reqstudentid: " + reqStudent._id);
 
-    studdb.studentModel.findOne({_id: studentid}, function (err, student) {
+    studdb.studentModel.findOne({_id: studentID}, function (err, student) {
         if (err) {
             console.log(err);
             // If user not in DB create
@@ -189,6 +190,7 @@ exports.checkStudent = function (req, res) {
             });
             // If user is already in DB check modules for updates
         } else {
+            return res.status(200).send(reqStudent);
             if (modules.checkModules(reqStudent) == 1) {
                 return res.json(req.body);
             } else {

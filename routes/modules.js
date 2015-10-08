@@ -88,7 +88,7 @@ exports.updateModule = function (req, res) {
     console.log("update");
 };
 
-exports.getmyModules = function (req, res) {
+exports.getMyModules = function (req, res) {
     // Student can view a list of his modules
     // Result contains all information about the modules, however, not all must be used
     var session = req.headers['jsessionid'];
@@ -123,7 +123,7 @@ exports.getmyModules = function (req, res) {
     });
 };
 
-exports.getModulebyId = function (req, res) {
+exports.getModuleById = function (req, res) {
     // Get a Module by ID
     // Result contains all information about the module, however, not all must be used
     moduledb.moduleModel.findbyId(req.params.id, function (err, module) {
@@ -136,7 +136,7 @@ exports.getModulebyId = function (req, res) {
     });
 };
 
-exports.getModulebyName = function (req, res) {
+exports.getModuleByName = function (req, res) {
     // Get a Module by its name
     // Result contains all information about the module, however, not all must be used
     moduledb.moduleModel.findOne({name: req.params.name}, function (err, module) {
