@@ -154,3 +154,7 @@ exports.getEffortsByType = function (req, res) {
     // get the information about efforts through population, select only when type is the given typeid
 };
 
+//TODO: Implement update method (Use PUT)
+//TODO: Implement insert method (USE POST)
+//TODO: Validate Effort (update/enter) --> Date of effort not more than 2 weeks in past!
+

@@ -4,7 +4,7 @@ var coursedb = require('../models/Course.js');
 var moduledb = require('../models/Module.js');
 var effortdb = require('../models/Effort.js');
 var effortCatdb = require('../models/EffCategory.js');
-var db = require('../db');
+//var db = require('../db');
 
 exports.clear = function () {
     studdb.studentModel.remove({}, function(err) {
@@ -176,18 +176,11 @@ exports.checkStudent = function (req, res) {
     studdb.studentModel.findOne({_id: studentID}, function (err, student) {
         if (err) {
             console.log(err);
+            return res.status(404).send('Student not in database');
             // If user not in DB create
         } else if (student == undefined) {
+            return res.status(404).send('Student not in database');
             console.log("kommt in erstellen teil");
-            reqStudent.save(function (err) {
-                if (err) {
-                    console.log(err);
-                    return res.sendStatus(500);
-                }
-                else {
-                    return res.json(req.body);
-                }
-            });
             // If user is already in DB check modules for updates
         } else {
             return res.status(200).send(reqStudent);

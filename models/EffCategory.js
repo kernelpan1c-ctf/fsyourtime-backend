@@ -7,7 +7,7 @@ var effCategorySchema = mongoose.Schema(
         description: {type: String, default: null}
     },
     {
-        collection: 'effCategorys'
+        collection: 'effCategories'
     }
 );
 
