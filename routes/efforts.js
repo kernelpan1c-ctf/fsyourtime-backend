@@ -6,7 +6,7 @@ var effortdb = require('../models/Effort.js');
 var studdb = require('../models/Student.js');
 var identdb = require('../models/Identification.js');
 
-exports.getMyEfforts = function (req, res) {
+exports.getEffortsByStudent = function (req, res) {
     // Student can view a list of his efforts
     // Result contains all information about the efforts, however, not all must be used
     var session = req.headers['jsessionid'];
@@ -153,6 +153,13 @@ exports.getEffortsByType = function (req, res) {
         });
     // get the information about efforts through population, select only when type is the given typeid
 };
+
+exports.createEffort = function(req, res) {
+    var amount = req.body.amount;
+    var module = req.body.amount;
+
+
+}
 
 //TODO: Implement update method (Use PUT)
 //TODO: Implement insert method (USE POST)
