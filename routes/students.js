@@ -173,22 +173,18 @@ exports.checkStudent = function (req, res) {
     console.log("studentid: " + studentID);
     //console.log("reqstudentid: " + reqStudent._id);
 
-    studdb.studentModel.findOne({_id: studentID}, function (err, student) {
+    studdb.studentModel.find({_id: studentID}, function (err, student) {
         if (err) {
             console.log(err);
             return res.status(404).send('Student not in database');
             // If user not in DB create
         } else if (student == undefined) {
             return res.status(404).send('Student not in database');
-            console.log("kommt in erstellen teil");
+            //console.log("kommt in erstellen teil");
             // If user is already in DB check modules for updates
         } else {
-            return res.status(200).send(reqStudent);
-            if (modules.checkModules(reqStudent) == 1) {
-                return res.json(req.body);
-            } else {
-                return res.SendStatus(500);
-            }
+            console.log(student);
+            return res.status(200).send(student);
         }
     });
 };
