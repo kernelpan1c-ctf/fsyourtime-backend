@@ -15,14 +15,10 @@ var bodyParser = require('body-parser');
 //import routes and configuration
 var dbConf = require('./db');
 var routes = require('./routes/index');
-//var users = require('./routes/users');
-
 
 // ---[ SETUP MIDDLEWARE ]---
 app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(function (req, res, next) {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -53,8 +49,8 @@ app.all('/*', function (req, res, next) {
 mongoose.connect(dbConf.url);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
-db.once('open', function (callback) {
-  console.log('Connected to Mongolab' + dbConf.url);
+db.once('open', function () {
+  console.log('Connected to MongoDB: ' + dbConf.url);
 });
 
 // ---[ REGISTER ROUTES ]---
@@ -94,6 +90,3 @@ app.use(function(err, req, res, next) {
 
 app.listen(port);
 console.log('Server listening on port: ' + port);
-
-
-module.exports = app;

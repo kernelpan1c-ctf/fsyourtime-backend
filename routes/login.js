@@ -7,7 +7,7 @@ var studentdb = require('../models/Student.js');
 
 exports.login = function (req, res) {
     console.log(req);
-    return res.status(200).send(req.params.user);
+    return res.status(200).send(req);
 }
 
 exports.logout = function (req, res) {
