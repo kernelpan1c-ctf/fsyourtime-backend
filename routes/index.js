@@ -35,4 +35,6 @@ router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 router.get('/api/efforttypes', efftypes.getAllTypes);
 
+router.post('/api/efforts/', efforts.createEffort);
+
 module.exports = router;

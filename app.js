@@ -18,7 +18,7 @@ var routes = require('./routes/index');
 
 // ---[ SETUP MIDDLEWARE ]---
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(function (req, res, next) {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
