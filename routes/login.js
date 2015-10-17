@@ -20,7 +20,7 @@ exports.login = function (req, res) {
         function(callback) {
             console.log("Requesting login from " + user);
             request('https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username='+user+'&password='+pass, function(err, response, body){
-                userInfo = JSON.parse(body);
+                var userInfo = JSON.parse(body);
                 console.log('Did it work? ' + userInfo.success + " ["+ typeof(userInfo.success) + "]");
                 if(userInfo.success == true) {
                     console.log('Down the waterfall #1');
@@ -43,10 +43,9 @@ exports.login = function (req, res) {
                 } else {
                     console.log('New user created. SessionID: ' + identEntry.jsession);
                     userinfo.mysessionid = identEntry.jsession;
-                    callback(null, userinfo, callback);
+                    callback(null, userinfo);
                 }
             });
-
         },
         function(userinfo, callback) {
 
@@ -60,7 +59,7 @@ exports.login = function (req, res) {
              */
             //require('request-debug')(request);
             //var agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36";
-            var cookie = "JSESSIONID="+userInfo.sessionid;
+            var cookie = "JSESSIONID="+userinfo.sessionid;
             request({
                 uri: 'https://cert-campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
                 headers: {
@@ -71,13 +70,14 @@ exports.login = function (req, res) {
                 console.log("I did it!!");
                 var studentinfo = JSON.parse(body);
                 userinfo.matricularnr = studentinfo.matrikelnummer;
+                //console.log("in final function\n" + JSON.stringify(userinfo));
                 callback(null, userinfo);
             });
         },
         function(result, callback) {
             //console.log(err);
             console.log("in final function\n" + JSON.stringify(result));
-            return res.status(200).send("Logged in");
+            return res.send(JSON.stringify(result));
         }
     ]);
     /*
@@ -90,7 +90,6 @@ exports.login = function (req, res) {
         console.log(body);
     });
     */
-
 }
 
 exports.logout = function (req, res) {
