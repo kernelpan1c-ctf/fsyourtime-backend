@@ -15,7 +15,6 @@ var studentSchema = mongoose.Schema(
         collection: 'students'
     }
 );
-
-var studentModel = mongoose.model('Student', studentSchema);
-exports.studentModel = studentModel;
+exports.studentModel = mongoose.model('Student', studentSchema);
+//exports.studentModel = studentModel;
 

@@ -157,7 +157,7 @@ exports.getEffortsByType = function (req, res) {
 exports.createEffort = function(req, res) {
     var amount = req.body.amount;
     var module = req.body.module;
-    var student = req.body.student;
+    var student = req.body.studentid;
 
     res.send("Created new effort: \n\tAmount: " + amount + "\n\tModule: " + module + "\n\tStudent: " + student);
 

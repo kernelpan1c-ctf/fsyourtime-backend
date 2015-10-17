@@ -11,14 +11,16 @@ var mongoose = require('mongoose');
 
 // import required modules
 var bodyParser = require('body-parser');
+var timeout = require('connect-timeout');
 
 //import routes and configuration
 var dbConf = require('./db');
 var routes = require('./routes/index');
 
 // ---[ SETUP MIDDLEWARE ]---
+app.use(timeout('10m'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(function (req, res, next) {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -89,4 +91,5 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(port);
+
 console.log('Server listening on port: ' + port);
