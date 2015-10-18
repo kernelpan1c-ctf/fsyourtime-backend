@@ -11,6 +11,6 @@ var courseSchema = mongoose.Schema(
 	}
 );
 
-var courseModel = mongoose.model('Course', courseSchema);
+exports.courseModel = mongoose.model('Course', courseSchema);
 
-exports.courseModel = courseModel;
+//exports.courseModel = courseModel;

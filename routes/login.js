@@ -13,8 +13,6 @@ exports.login = function (req, res) {
     var user = req.body.username;
     var pass = req.body.password;
     res.setTimeout(5*60*1000);
-    //var userInfo = '';
-    //var identEntry = '';
 
     async.waterfall([
         function(callback) {
@@ -30,56 +28,61 @@ exports.login = function (req, res) {
             });
         },
         function(user, pass, userinfo ,callback) {
-            var identEntry = new identdb.identificationModel();
             var sessionBuffer = new Buffer(user+pass+userinfo.sessionid);
-            //console.log(sessionBuffer.toString());
-            var hashedSessionBuffer = crypto.createHash('sha256').update(sessionBuffer).digest('hex');
-            //console.log(hashedSessionBuffer.toUpperCase());
-            identEntry.jsession = hashedSessionBuffer.toUpperCase();
-            //console.log(identEntry.jsession);
-            identEntry.save(function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('New user created. SessionID: ' + identEntry.jsession);
-                    userinfo.mysessionid = identEntry.jsession;
-                    callback(null, userinfo);
-                }
-            });
+            var hashedSessionBuffer = crypto.createHash('sha256').update(sessionBuffer).digest('hex').toUpperCase();
+
+            console.log('New user created. SessionID: ' + hashedSessionBuffer);
+            userinfo.mysessionid = hashedSessionBuffer;
+            callback(null, userinfo);
         },
         function(userinfo, callback) {
 
             console.log('Backend Session ID: ' + userinfo.mysessionid);
             console.log('Efiport Session ID: ' + userinfo.sessionid);
             console.log('Requesting Student Data...');
-            /*
-             var studentRequest = request.defaults({
-             headers: {sessionid: userInfo.sessionid}
-             });
-             */
+
             //require('request-debug')(request);
-            //var agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36";
             var cookie = "JSESSIONID="+userinfo.sessionid;
             request({
                 uri: 'https://cert-campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
                 headers: {
-                    //sessionid: userInfo.sessionid,
                     "Cookie": cookie
                 }
             }, function(err, response, body) {
-                console.log("I did it!!");
+                console.log('Student data arrived....');
                 var studentinfo = JSON.parse(body);
                 userinfo.matricularnr = studentinfo.matrikelnummer;
                 //console.log("in final function\n" + JSON.stringify(userinfo));
-                callback(null, userinfo);
+                callback(null, userinfo, studentinfo);
             });
         },
-        function(result, callback) {
+        function(userinfo, studentinfo, callback) {
             //console.log(err);
-            console.log("in final function\n" + JSON.stringify(result));
-            return res.send(JSON.stringify(result));
+            var modules = {};
+            //console.log("in final function\n" + userinfo);
+            console.log('Parsing student data...');
+            studentinfo.items.forEach(function(item) {
+                item.children.forEach(function(topLevelModule) {
+                    //var curYear = new Date();
+                    //curYear = curYear.getFullYear();
+                    if(topLevelModule.hasOwnProperty('children')) {
+                        topLevelModule.children.forEach(function(module){
+                            console.log(topLevelModule.title + " - " +module.title);
+                            modules[module.title] = {'Category':topLevelModule.title, 'year':module.year, 'moduleid':module.id};
+                        });
+
+                    }
+                    //console.log(module.year)
+                })
+                //console.log(item);
+            });
+            userinfo.modules = modules;
+            res.send(JSON.stringify(userinfo, null, 3) + "\n");
+            callback(null, userinfo);
         }
-    ]);
+    ], function(err, result) {
+        if(err) console.log(err);
+    });
     /*
     var studentRequest = request.defaults({
         headers: {sessionid: identEntry.jsession}

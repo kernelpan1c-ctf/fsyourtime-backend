@@ -11,5 +11,5 @@ var effTypeSchema = mongoose.Schema(
     }
 );
 
-var effTypeModel = mongoose.model('EffType', effTypeSchema);
-exports.effTypeModel = effTypeModel;
+exports.effTypeModel = mongoose.model('EffType', effTypeSchema);
+//exports.effTypeModel = effTypeModel;

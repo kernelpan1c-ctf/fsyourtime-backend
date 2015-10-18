@@ -11,5 +11,5 @@ var effCategorySchema = mongoose.Schema(
     }
 );
 
-var effCategoryModel = mongoose.model('EffCategory', effCategorySchema);
-exports.effCategoryModel = effCategoryModel;
+exports.effCategoryModel = mongoose.model('EffCategory', effCategorySchema);
+//exports.effCategoryModel = effCategoryModel;

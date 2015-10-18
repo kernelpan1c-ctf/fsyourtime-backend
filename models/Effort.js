@@ -13,5 +13,5 @@ var effortSchema = mongoose.Schema(
 }
 );
 
-var effortModel = mongoose.model('Effort', effortSchema);
-exports.effortModel = effortModel;
+exports.effortModel = mongoose.model('Effort', effortSchema);
+//exports.effortModel = effortModel;

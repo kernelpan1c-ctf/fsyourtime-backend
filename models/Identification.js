@@ -15,5 +15,5 @@ var identificationSchema = mongoose.Schema(
     }
 );
 
-var identificationModel = mongoose.model('Identification', identificationSchema);
-exports.identificationModel = identificationModel;
+exports.identificationModel = mongoose.model('Identification', identificationSchema);
+//exports.identificationModel = identificationModel;
