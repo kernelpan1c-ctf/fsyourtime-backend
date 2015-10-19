@@ -162,8 +162,70 @@ exports.createEffort = function(req, res) {
     res.send("Created new effort: \n\tAmount: " + amount + "\n\tModule: " + module + "\n\tStudent: " + student);
 
 }
-
-//TODO: Implement update method (Use PUT)
-//TODO: Implement insert method (USE POST)
+ exports.createEffort = function(req, res) {
+	var newEffort = new effortdb.effortModel(); 
+	newEffort.amount = req.body.amount;
+    newEffort.module = moduledb.moduleModel.findOne({name: req.body.module});
+	newEffort.type = efforttypedb.effTypeModel.findOne({name: req.body.type});
+	newEffort.matricularnr = studdb.studentModel.findById(req.body.matricularnr);
+	newEffort.performanceDate = new Date(req.body.performanceDate); // "<YYYY-mm-dd>" Format
+	newEffort.material = req.body.material;
+	newEffort.place = req.body.place;
+	
+	newEffort.save(function(err, result) {
+      if (err) {
+           console.log(err);
+                return res.sendStatus(500);
+            }
+    else {
+                return res.send(newEffort);
+            }
+                     });
+    };
+	
+ exports.updateEffort = function(req, res) {
+	var newamount = req.body.amount;
+    var newmodule = moduledb.moduleModel.findOne({name: req.body.module});
+	var newtype = efforttypedb.effTypeModel.findOne({name: req.body.type});
+	var newperformanceDate = new Date(req.body.performanceDate); // "<YYYY-mm-dd>" Format
+	var newcreationDate = new Date();
+	var newmaterial = req.body.material;
+	var newplace = req.body.place;
+	
+	efforttypedb.findByIdAndUpdate(req.params.effortid, {amount: newamount, module: newmodule, type: newtype, performanceDate: newperformanceDate, creationDate: newcreationDate, material: newmaterial, place: newplace},function (err, effort) {
+      if (err) {
+           console.log(err);
+                return res.sendStatus(500);
+            }
+    else {
+                return res.send('We did it!');
+            }
+                     });
+    };
+ 
+ 
+ exports.deleteEffort = function(req, res) {
+	effortdb.findByIdAndRemove(req.params.effortid, function (err) {
+    if (err) {
+		console.log(err);
+		return res.sendStatus(500);
+	}
+	else { return res.sendStatus(200)}
+  }); 
+	 
+ 
+  };
+  
+  
+ exports.deleteAllMyEfforts = function(req, res) {	 
+	effortdb.remove({matricularnr: req.params.matricularnr}, function (err) {
+    if (err) {
+		console.log(err);
+		return res.sendStatus(500);
+	}
+	else { return res.sendStatus(200)}
+  }); 
+	 
+ 
+  };
 //TODO: Validate Effort (update/enter) --> Date of effort not more than 2 weeks in past!
-
