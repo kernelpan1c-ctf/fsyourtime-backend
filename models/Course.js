@@ -7,7 +7,7 @@ var courseSchema = mongoose.Schema(
 		classOf: {type: Number, default: null} // Date oder number
 	},
 	{
-	collection : 'Courses'
+	collection : 'courses'
 	}
 );
 
