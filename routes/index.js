@@ -34,6 +34,12 @@ router.get('/api/efforts/:efftypeid', efforts.getEffortsByType);
 router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 router.get('/api/efforttypes', efftypes.getAllTypes);
+router.put('/api/changeMyPrivacy', students.changeMyPrivacy);
+//ToDo: Change to REST Stil
+router.post('/api/createEffort', efforts.createEffort);
+router.put('/api/updateEffort:effortid', efforts.updateEffort);
+router.delete('/api/deleteEffort:effortid', efforts.deleteEffort);
+router.delete('/api/deleteAllMyEfforts', efforts.deleteAllMyEfforts);
 
 router.post('/api/efforts/', efforts.createEffort);
 
