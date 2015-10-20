@@ -9,12 +9,13 @@ var studentSchema = mongoose.Schema(
         course: {type: String, ref: 'Course'},
         modules: [{type: String, ref: 'Module'}],
         efforts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Effort'}],
-        privacyFlag: {type: Boolean, default: false, required: true}
+        privacyFlag: {type: Boolean, default: false, required: true},
+        modulesFetched: {type: Boolean, default: false, required: true}
     },
     {
         collection: 'students'
     }
 );
 exports.studentModel = mongoose.model('Student', studentSchema);
-//exports.studentModel = studentModel;
+
 

@@ -17,8 +17,12 @@ exports.login = function (req, res) {
     //res.setTimeout(5000);
     async.waterfall([
         function(callback) {
+            require('request-debug')(request);
             console.log("Requesting login from " + user);
-            request('https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username='+user+'&password='+pass, function(err, response, body){
+            request({
+                'uri':'https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username='+user + '&password=' + pass,
+                'timeout':5000
+            } , function(err, response, body) {
                 try {
                     var userInfo = JSON.parse(body);
                 } catch (e) {
@@ -49,7 +53,7 @@ exports.login = function (req, res) {
             console.log('Efiport Session ID: ' + userinfo.sessionid);
             console.log('Requesting Student Data...');
 
-            require('request-debug')(request);
+
             var cookie = "JSESSIONID="+userinfo.sessionid;
             request({
                 uri: 'https://cert-campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
@@ -130,7 +134,7 @@ exports.login = function (req, res) {
                                 callback("Fucked UP!");
                                 return;
                             } else {
-                                var res = {'worked':true, 'added_module':mod.m_id};
+                                var res = {'worked':true, 'added_module':mod._id};
                                 callback(null, res);
                             }
                         });
