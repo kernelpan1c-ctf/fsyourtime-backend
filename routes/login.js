@@ -109,7 +109,7 @@ exports.login = function (req, res) {
         function(userinfo, callback) {
             async.each(userinfo.modules, function(moduleinfo, callback) {
                 //here goes calls to save all modules in the database...
-                console.log(JSON.stringify(moduleinfo, null, 3));
+                //console.log(JSON.stringify(moduleinfo, null, 3));
                 async.waterfall([
                     function(callback) {
                         moduledb.moduleModel.count({_id:moduleinfo.m_id}, function(err, count) {
@@ -156,7 +156,7 @@ exports.login = function (req, res) {
         }
     ], function(err, result) {
         if(err) console.log(err);
-        else console.log(JSON.stringify(result, null, 3));
+        //else console.log(JSON.stringify(result, null, 3));
     });
     /*
     var studentRequest = request.defaults({
