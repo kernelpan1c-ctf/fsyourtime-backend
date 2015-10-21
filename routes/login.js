@@ -48,7 +48,8 @@ exports.login = function (req, res) {
 
             console.log('New user created. SessionID: ' + hashedSessionBuffer);
             userinfo.mysessionid = hashedSessionBuffer;
-            callback(null, userinfo);
+            callback(userinfo); //TODO: For Loadtesting only -- needs to be removed
+            //callback(null, userinfo);
         },
         function(userinfo, callback) {
 
