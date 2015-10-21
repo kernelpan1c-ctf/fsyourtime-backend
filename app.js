@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  console.log('Connection from ' + ip);
+  console.log('Connection from ' + ip + ' ' + req.originalUrl);
   next();
 });
 

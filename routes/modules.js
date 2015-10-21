@@ -3,7 +3,7 @@
 //var studentdb = require('../models/Student.js');
 var moduledb = require('../models/Module.js');
 var studdb = require('../models/Student.js');
-//var identdb = require('../models/Identification.js');
+var identdb = require('../models/Identification.js');
 
 exports.getModule = function (req, res) {
   var id = req.params.id;
@@ -91,9 +91,10 @@ exports.updateModule = function (req, res) {
 exports.getMyModules = function (req, res) {
     // Student can view a list of his modules
     // Result contains all information about the modules, however, not all must be used
-    var session = req.headers['jsessionid'];
+    //var session = req.headers['jsessionid'];
     // req.sessionID ??
-    var matricularnr;
+    //var matricularnr = req.;
+    /*
     identdb.findOne({jsession: session}, function (err, identification) {
         if (err) {
             console.log(err);
@@ -102,6 +103,7 @@ exports.getMyModules = function (req, res) {
             matricularnr = identification.relmatricularnr;
         }
     });
+    */
     // find out which student is logged in
     var modulelist = [];
     studdb.studentModel.findOne({_id: matricularnr}, function (err, student) {
@@ -126,7 +128,8 @@ exports.getMyModules = function (req, res) {
 exports.getModuleById = function (req, res) {
     // Get a Module by ID
     // Result contains all information about the module, however, not all must be used
-    moduledb.moduleModel.findbyId(req.params.id, function (err, module) {
+    console.log("Looking for module: " + req.params.id);
+    moduledb.moduleModel.findById(req.params.id, function (err, module) {
         if (err) {
             console.log(err);
         }

@@ -86,11 +86,13 @@ exports.login = function (req, res) {
                             var curYear = new Date();
                             curYear = curYear.getFullYear();
                             if(module.year == curYear) {
+                                var sessionBuffer = new Buffer(module.title);
+                                var hashedSessionBuffer = crypto.createHash('sha1').update(sessionBuffer).digest('hex');
                                 modules[module.title] = {
                                     'm_name':module.title,
                                     'm_category': topLevelModule.title,
                                     'm_year': module.year,
-                                    'm_id': module.moduleid,
+                                    'm_id': hashedSessionBuffer,
                                     'm_effort_assignment': module.assignments,
                                     'm_effort_idependent': module.independenthours,
                                     'm_effort_contact': module.contacthours
