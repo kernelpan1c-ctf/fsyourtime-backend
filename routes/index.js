@@ -24,7 +24,7 @@ router.get('/sample/create', sample.createSampleData);
 //router.get('/api/dummy', students.dummy);
 //router.post('/api/clear', students.clear);
 //router.get('/api/getMyInfo', students.getMyInfo);
-router.get('/api/modules', modules.getMyModules);
+router.get('/api/modules', modules.getAllModules);
 router.get('/api/modules/:id', modules.getModuleById);
 router.get('/api/modules/:name', modules.getModuleByName);
 router.get('/api/efforts', efforts.getEffortsByStudent);

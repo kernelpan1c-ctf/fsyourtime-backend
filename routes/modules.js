@@ -16,22 +16,6 @@ exports.getModule = function (req, res) {
     })
 };
 
-exports.checkModules = function (paramStudent){
-    studdb.studentModel.findById(paramStudent._id, function (err, student) {
-        if (err) {
-            console.log(err);
-            return 0;
-        }
-        if (student.modules != paramStudent.modules){
-            student.modules = paramStudent.modules;
-            student.save();
-            return 1;
-        }
-    });
-
-
-};
-
 exports.createModule = function (req, res) {
     var module = new moduledb.moduleModel(req.body);
     var studentid = req.matricularnr;
@@ -88,7 +72,7 @@ exports.updateModule = function (req, res) {
     console.log("update");
 };
 
-exports.getMyModules = function (req, res) {
+exports.getAllModules = function (req, res) {
     // Student can view a list of his modules
     // Result contains all information about the modules, however, not all must be used
     //var session = req.headers['jsessionid'];
@@ -105,6 +89,7 @@ exports.getMyModules = function (req, res) {
     });
     */
     // find out which student is logged in
+    /*
     var modulelist = [];
     studdb.studentModel.findOne({_id: matricularnr}, function (err, student) {
             if (err) {
@@ -115,7 +100,8 @@ exports.getMyModules = function (req, res) {
             }
         }
     );
-    moduledb.moduleModel.find({_id: {$in: modulelist}}, function (err, modules) {
+    */
+    moduledb.moduleModel.find({}, function (err, modules) {
         if (err) {
             console.log(err);
         }
