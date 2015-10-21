@@ -37,6 +37,9 @@ exports.login = function (req, res) {
                     //console.log("Session: " + identEntry.jsession);
                     callback(null, user, pass, userInfo);
                 }
+                else {
+                    callback("Login failed");
+                }
             });
         },
         function(user, pass, userinfo ,callback) {
@@ -157,9 +160,15 @@ exports.login = function (req, res) {
             callback(null, userinfo)
         }
     ], function(err, result) {
-        if(err) console.log(err);
+        if(err) {
+            console.log(err);
+            res.send(200, err);
+        }
+        console.log("Done...");
         //else console.log(JSON.stringify(result, null, 3));
     });
+
+
     /*
     var studentRequest = request.defaults({
         headers: {sessionid: identEntry.jsession}
