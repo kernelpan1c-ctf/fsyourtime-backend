@@ -15,15 +15,31 @@ router.get('/', function(req, res, next) {
     res.send('you\'ve reached the index');
     next();
 });
-
+/**
+ * @api {post} /login Login
+ * @apiName Login
+ * @apiGroup General
+ *
+ * @apiParam username FSCampus Username
+ * @apiParam password FSCampus Password
+ *
+ * @apiSuccess {String} id SessionID
+ * @apiSuccess {Boolean} success True if login worked
+ */
 router.post('/api/login', login.login);
 router.post('/api/logout', login.logout);
 
-router.get('/api/student/:id', students.checkStudent);
+router.get('/api/students/:id', students.checkStudent);
 router.get('/sample/create', sample.createSampleData);
-//router.get('/api/dummy', students.dummy);
-//router.post('/api/clear', students.clear);
-//router.get('/api/getMyInfo', students.getMyInfo);
+/**
+ * @api {get} /modules Get all Modules available in Database
+ * @apiName GetModules
+ * @apiGroup Modules
+ *
+ * @apiSuccess {String} id ModuleID
+ * @apiSuccess {String} name Module Name
+ *
+ */
 router.get('/api/modules', modules.getAllModules);
 router.get('/api/modules/:id', modules.getModuleById);
 router.get('/api/modules/:name', modules.getModuleByName);

@@ -1,10 +1,7 @@
 {
-  "name": "mean-test",
-  "version": "0.0.0",
+  "name": "fsyourtimebackend",
+  "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
-  },
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "~1.13.2",
