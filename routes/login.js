@@ -17,7 +17,7 @@ exports.login = function (req, res) {
     //res.setTimeout(5000);
     async.waterfall([
         function(callback) {
-            require('request-debug')(request);
+            //require('request-debug')(request);
             console.log("Requesting login from " + user);
             request({
                 'uri':'https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username='+user + '&password=' + pass,
