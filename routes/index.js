@@ -15,6 +15,10 @@ router.get('/', function(req, res, next) {
     res.send('you\'ve reached the index');
     next();
 });
+
+router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
+    res.send('loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e');
+});
 /**
  * @api {post} /login Login
  * @apiName Login
