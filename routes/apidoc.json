@@ -3,5 +3,6 @@
   "version": "0.1.1",
   "description": "Backend der FS YourTime App",
   "title": "FS Yourtime Backend",
-  "url" : "http://backend-dev.kevinott.de/api"
+  "url" : "http://backend-dev.kevinott.de/api",
+  "sampleUrl":"http://backend-dev.kevinott.de/api"
 }

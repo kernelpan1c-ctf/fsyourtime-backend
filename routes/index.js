@@ -23,8 +23,12 @@ router.get('/', function(req, res, next) {
  * @apiParam username FSCampus Username
  * @apiParam password FSCampus Password
  *
+ * @apiExample Usage [example]
+ *      curl -H "Content-Type: application/json" -X POST -d '{"username": <user>, "password": <pass>}' <api-url>/api/login
+ *
  * @apiSuccess {String} id SessionID
  * @apiSuccess {Boolean} success True if login worked
+ *
  */
 router.post('/api/login', login.login);
 router.post('/api/logout', login.logout);
