@@ -2,6 +2,9 @@
   "name": "fsyourtimebackend",
   "version": "0.1.0",
   "private": true,
+  "scripts":{
+    "start": "node app.js"
+  },
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "~1.13.2",
