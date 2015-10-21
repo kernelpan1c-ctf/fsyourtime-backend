@@ -27,7 +27,7 @@ exports.login = function (req, res) {
                     var userInfo = JSON.parse(body);
                 } catch (e) {
                     var error = {'errormsg': e.message, 'ep_response':body};
-                    res.status(500).send(JSON.stringify(error, null, 3));
+                    //res.status(500).send(JSON.stringify(error, null, 3));
                     callback(error);
                     return;
                 }
