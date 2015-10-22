@@ -23,6 +23,8 @@ exports.login = function (req, res) {
                 'uri':'https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username='+user + '&password=' + pass,
                 'timeout':5000
             } , function(err, response, body) {
+                //res.send("Go fuck yourself, BIAAAATSCH");
+
                 try {
                     var userInfo = JSON.parse(body);
                 } catch (e) {
