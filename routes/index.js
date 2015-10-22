@@ -60,6 +60,22 @@ router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 router.get('/api/efforttypes', efftypes.getAllTypes);
 //router.put('/api/changeMyPrivacy', students.changeMyPrivacy);
 //ToDo: Change to REST Stil
+/**
+ * @api {post} /efforts Save new effort
+ * @apiName Create Effort
+ * @apiGroup Efforts
+ *
+ * @apiSuccess {Boolean} success true, if module was saved
+ * @apiSuccess {String} id ID if effort
+ *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *      "amount":"20",
+ *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
+ *      "studentid":"1234567"
+ *  }
+ *
+ */
 router.post('/api/createEffort', efforts.createEffort);
 router.put('/api/updateEffort:effortid', efforts.updateEffort);
 router.delete('/api/deleteEffort:effortid', efforts.deleteEffort);

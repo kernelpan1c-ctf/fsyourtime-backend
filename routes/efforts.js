@@ -209,7 +209,12 @@ exports.createEffort = function(req, res) {
             newEffort.createdBy = results[1]["_id"];
             newEffort.save(function(err, result) {
                 if(err) res.status(500).send("Failed to create effort");
-                else if(result) res.status(200).send(result);
+                else if(result) {
+                    var message = {};
+                    message.success = true;
+                    message.id = result._id;
+                    res.status(200).send(message);
+                }
             })
             //console.log(newEffort);
             //res.status(200).send(newEffort);
