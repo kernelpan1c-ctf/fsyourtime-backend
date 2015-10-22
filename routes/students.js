@@ -168,7 +168,6 @@ exports.dummy = function (req, res) {
 exports.checkStudent = function (req, res) {
     console.log('I was just called :O');
     var studentID = req.params.id;
-    var reqStudent = new studdb.studentModel(req.body);
 
     console.log("studentid: " + studentID);
     //console.log("reqstudentid: " + reqStudent._id);

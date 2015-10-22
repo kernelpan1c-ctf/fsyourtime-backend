@@ -7,6 +7,7 @@ var studdb = require('../models/Student.js');
 var identdb = require('../models/Identification.js');
 var moduledb = require('../models/Module');
 var efforttypedb = require('../models/EffType');
+var async = require('async');
 
 exports.getEffortsByStudent = function (req, res) {
     // Student can view a list of his efforts
@@ -166,10 +167,59 @@ exports.getEffortsByType = function (req, res) {
  }
  */
 exports.createEffort = function(req, res) {
+    //console.log(req.body);
+    async.parallel([
+        function(callback) {
+            moduledb.moduleModel.findById(req.body.moduleid, function(err, result) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                if (result == undefined) {
+                    console.log("Module not found");
+
+                    callback("Module not found");
+                } else {
+                    callback(null, result);
+                }
+            });
+        },
+        function(callback) {
+            studdb.studentModel.findById(req.body.studentid, function(err, result) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                if (result == undefined) {
+                    console.log("Student");
+
+                    callback("Student");
+                } else {
+                    callback(null, result);
+                }
+            });
+
+        }
+    ], function(err, results) {
+        if(results) {
+            //result[0] = Module, result[1] = Student
+            var newEffort = new effortdb.effortModel();
+            newEffort.amount = req.body.amount;
+            newEffort.module = results[0]["_id"];
+            newEffort.createdBy = results[1]["_id"];
+            newEffort.save(function(err, result) {
+                if(err) res.status(500).send("Failed to create effort");
+                else if(result) res.status(200).send(result);
+            })
+            //console.log(newEffort);
+            //res.status(200).send(newEffort);
+        }
+    });
+    return;
     var newEffort = new effortdb.effortModel();
     newEffort.amount = req.body.amount;
     newEffort.module = moduledb.moduleModel.findOne({name: req.body.module}).exec();
-    newEffort.type = efforttypedb.effTypeModel.findOne({name: req.body.type}).exec();
+    //newEffort.type = efforttypedb.effTypeModel.findOne({name: req.body.type}).exec();
     newEffort.matricularnr = studdb.studentModel.findById(req.body.matricularnr).exec();
     newEffort.performanceDate = new Date(req.body.performanceDate); // "<YYYY-mm-dd>" Format
     newEffort.material = req.body.material;

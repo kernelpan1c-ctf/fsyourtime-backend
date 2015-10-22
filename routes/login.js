@@ -48,8 +48,8 @@ exports.login = function (req, res) {
 
             console.log('New user created. SessionID: ' + hashedSessionBuffer);
             userinfo.mysessionid = hashedSessionBuffer;
-            callback(userinfo); //TODO: For Loadtesting only -- needs to be removed
-            //callback(null, userinfo);
+            //callback(userinfo); //TODO: For Loadtesting only -- needs to be removed
+            callback(null, userinfo);
         },
         function(userinfo, callback) {
 
@@ -76,6 +76,7 @@ exports.login = function (req, res) {
                 callback(null, userinfo, studentinfo);
             });
         },
+        //TODO hier funktion für ident table
         function(userinfo, studentinfo, callback) {
             //console.log(err);
             var modules = {};
@@ -83,7 +84,6 @@ exports.login = function (req, res) {
             console.log('Parsing student data...');
             studentinfo.items.forEach(function(item) {
                 item.children.forEach(function(topLevelModule) {
-
                     if(topLevelModule.hasOwnProperty('children')) {
                         topLevelModule.children.forEach(function(module){
                             console.log(topLevelModule.title + " - " + module.title);
@@ -112,6 +112,8 @@ exports.login = function (req, res) {
             res.send(JSON.stringify(userinfo, null, 3) + "\n");
             callback(null, userinfo);
         },
+        //TODO: funktion student speichern mit ids von modulen
+        //TODO: holen und verarbeiten in einer funktion
         function(userinfo, callback) {
             async.each(userinfo.modules, function(moduleinfo, callback) {
                 //here goes calls to save all modules in the database...
