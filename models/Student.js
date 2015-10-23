@@ -8,9 +8,9 @@ var studentSchema = mongoose.Schema(
         _id: {type: String, required: true, unique: true},
         course: {type: String, ref: 'Course'},
         modules: [{type: String, ref: 'Module'}],
-        efforts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Effort'}],
+        //efforts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Effort'}],
         privacyFlag: {type: Boolean, default: false, required: true},
-        modulesFetched: {type: Boolean, default: false, required: true}
+        //modulesFetched: {type: Boolean, default: false, required: true}
     },
     {
         collection: 'students'

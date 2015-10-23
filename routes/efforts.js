@@ -12,56 +12,41 @@ var async = require('async');
 exports.getEffortsByStudent = function (req, res) {
     // Student can view a list of his efforts
     // Result contains all information about the efforts, however, not all must be used
-    var session = req.headers['jsessionid'];
-    // req.sessionID ??
-    var matricularnr;
-    identdb.findOne({jsession: session}, function (err, identification) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            matricularnr = identification.relmatricularnr;
-        }
-    });
-    // find out which student is logged in
-    var effortlist = [];
-    studdb.studentModel.findOne({_id: matricularnr}, function (err, student) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            effortlist = student.efforts;
-        }
-    });
-    // get all the efforts a student has registered
-    effortdb.effortModel
-        .find({_id: {$in: effortlist}})
-        .populate({
-            path: 'module'
+    var studentId = req.params.studentid;
+    async.series([
+        function(callback) {
+            console.log("Checking for student: " + studentId);
+            studdb.studentModel.count({ _id: studentId }, function(err, count) {
+                //console.log("Found: " + count);
+                if(count > 0) {
+                    console.log("Student found. Searching database for efforts.");
+                    callback()
+                } else {
+                    callback("Student not in Database!");
+                }
+            });
         },
-        {
-            path: 'type',
-            select: 'name relcategory'
-        })
-        .exec(function (err, efforts) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                res.json(efforts);
-            }
-        });
-    // get the information about efforts through population
+        function(callback) {
+            effortdb.effortModel.find( { createdBy: studentId }, function(err, result) {
+                if(err) console.log(err);
+                else callback(result);
+            });
+        }
+    ], function (err, result) {
+        console.log("Done. Sending results.");
+        if(err) res.status(500).send(err);
+        else if(result) res.status(200).send(result);
+    });
 };
 
 exports.getEffortById = function (req, res) {
     // Get an Effort by ID
-    effortdb.effortModel.findbyId(req.params.id, function (err, effort) {
+    effortdb.effortModel.findById(req.params.id, function (err, effort) {
         if (err) {
             console.log(err);
         }
         else {
-            res.json(effort);
+            res.status(200).send(effort);
         }
     });
 };
@@ -168,16 +153,19 @@ exports.getEffortsByType = function (req, res) {
  */
 exports.createEffort = function(req, res) {
     //console.log(req.body);
+    var modId = req.body.moduleid;
+    var studId = req.body.studentid;
+
     async.parallel([
         function(callback) {
-            moduledb.moduleModel.findById(req.body.moduleid, function(err, result) {
+
+            console.log(modId + " " + studId);
+            moduledb.moduleModel.findById(modId, function(err, result) {
                 if (err) {
                     callback(err);
                     return;
                 }
                 if (result == undefined) {
-                    console.log("Module not found");
-
                     callback("Module not found");
                 } else {
                     callback(null, result);
@@ -185,15 +173,14 @@ exports.createEffort = function(req, res) {
             });
         },
         function(callback) {
-            studdb.studentModel.findById(req.body.studentid, function(err, result) {
+            studdb.studentModel.findById(studId, function(err, result) {
                 if (err) {
                     callback(err);
                     return;
                 }
                 if (result == undefined) {
-                    console.log("Student");
-
-                    callback("Student");
+                    callback("Student not found");
+                    return;
                 } else {
                     callback(null, result);
                 }
@@ -201,7 +188,7 @@ exports.createEffort = function(req, res) {
 
         }
     ], function(err, results) {
-        if(results) {
+        if(results.length == 2) {
             //result[0] = Module, result[1] = Student
             var newEffort = new effortdb.effortModel();
             newEffort.amount = req.body.amount;
@@ -213,11 +200,13 @@ exports.createEffort = function(req, res) {
                     var message = {};
                     message.success = true;
                     message.id = result._id;
-                    res.status(200).send(message);
+                    res.status(201).send(message);
                 }
             })
             //console.log(newEffort);
             //res.status(200).send(newEffort);
+        } else {
+            res.status(404).send("User or module not in database");
         }
     });
     return;

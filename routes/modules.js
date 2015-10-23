@@ -5,17 +5,19 @@ var moduledb = require('../models/Module.js');
 var studdb = require('../models/Student.js');
 var identdb = require('../models/Identification.js');
 
+//TODO: do we need this?
 exports.getModule = function (req, res) {
   var id = req.params.id;
     moduledb.moduleModel.findOne({_id: id}, function (err, module) {
         if (err || module == undefined) {
             console.log(err);
-            return res.sendStatus(401);
+            return res.sendStatus(404);
         }
         return res.json(module);
     })
 };
 
+//TODO: not needed, marked for deletion
 exports.createModule = function (req, res) {
     var module = new moduledb.moduleModel(req.body);
     var studentid = req.matricularnr;
@@ -42,7 +44,7 @@ exports.createModule = function (req, res) {
         student.save();
     })
 };
-
+//TODO: not needed, marked for deletion
 exports.deleteModule = function (req, res) {
     var studentid = req.params.studentid;
     var moduleid = req.params.id;
@@ -72,41 +74,18 @@ exports.updateModule = function (req, res) {
     console.log("update");
 };
 
-exports.getAllModules = function (req, res) {
+exports.getModulesByStudent = function (req, res) {
     // Student can view a list of his modules
     // Result contains all information about the modules, however, not all must be used
     //var session = req.headers['jsessionid'];
     // req.sessionID ??
-    //var matricularnr = req.;
-    /*
-    identdb.findOne({jsession: session}, function (err, identification) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            matricularnr = identification.relmatricularnr;
-        }
-    });
-    */
-    // find out which student is logged in
-    /*
-    var modulelist = [];
-    studdb.studentModel.findOne({_id: matricularnr}, function (err, student) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                modulelist = student.modules
-            }
-        }
-    );
-    */
-    moduledb.moduleModel.find({}, function (err, modules) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.json(modules)
+    var studentid = req.params.studentid;
+    console.log(studentid);
+    studdb.studentModel.find({_id: studentid}).populate('modules').exec(function(err, result) {
+        if(err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(result[0].modules);
         }
     });
 };
@@ -124,7 +103,7 @@ exports.getModuleById = function (req, res) {
         }
     });
 };
-
+//TODO: Errorprone due to types, suggesting deletion
 exports.getModuleByName = function (req, res) {
     // Get a Module by its name
     // Result contains all information about the module, however, not all must be used

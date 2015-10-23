@@ -26,12 +26,18 @@ router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
  *
  * @apiParam username FSCampus Username
  * @apiParam password FSCampus Password
+ * @apiParam syncdata If "true", modules will be fetched from efiport
  *
- * @apiExample Usage [example]
- *      curl -H "Content-Type: application/json" -X POST -d '{"username": <user>, "password": <pass>}' <api-url>/api/login
+ * @apiParamExample {json} Example
+ *    {
+ *      "username": "user",
+ *      "password": "pass",
+ *      "syncdata": true
+ *    }
  *
  * @apiSuccess {String} id SessionID
  * @apiSuccess {Boolean} success True if login worked
+ * @apiSuccess {Boolean} privacy True if the User has previously accepted privacy statement
  *
  */
 router.post('/api/login', login.login);
@@ -48,13 +54,13 @@ router.get('/sample/create', sample.createSampleData);
  * @apiSuccess {String} name Module Name
  *
  */
-router.get('/api/modules', modules.getAllModules);
-router.get('/api/modules/:id', modules.getModuleById);
-router.get('/api/modules/:name', modules.getModuleByName);
-router.get('/api/efforts', efforts.getEffortsByStudent);
+router.get('/api/modules/student/:studentid', modules.getModulesByStudent);
+//router.get('/api/modules/:id', modules.getModuleById);
+//router.get('/api/modules/:name', modules.getModuleByName);
+router.get('/api/efforts/student/:studentid', efforts.getEffortsByStudent);
 router.get('/api/efforts/:id', efforts.getEffortById);
-router.get('/api/efforts/:moduleid', efforts.getEffortsByModule);
-router.get('/api/efforts/:efftypeid', efforts.getEffortsByType);
+router.get('/api/efforts/module/:moduleid', efforts.getEffortsByModule);
+//router.get('/api/efforts/:efftypeid', efforts.getEffortsByType);
 router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 router.get('/api/efforttypes', efftypes.getAllTypes);
@@ -68,6 +74,10 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  * @apiSuccess {Boolean} success true, if module was saved
  * @apiSuccess {String} id ID if effort
  *
+ * @apiParam {Integer} amount Booked time in Minutes
+ * @apiParam {String} moduleid Module for the effort
+ * @apiParam {String} studentid Creator of the effort
+ *
  * @apiParamExample {json} Request-Example:
  *  {
  *      "amount":"20",
@@ -76,10 +86,10 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  *  }
  *
  */
-router.post('/api/createEffort', efforts.createEffort);
-router.put('/api/updateEffort:effortid', efforts.updateEffort);
-router.delete('/api/deleteEffort:effortid', efforts.deleteEffort);
-router.delete('/api/deleteAllMyEfforts', efforts.deleteAllMyEfforts);
+router.post('/api/efforts', efforts.createEffort);
+router.put('/api/updateEffort/:effortid', efforts.updateEffort);
+//router.delete('/api/deleteEffort/:effortid', efforts.deleteEffort);
+//router.delete('/api/eff', efforts.deleteAllMyEfforts);
 
 router.post('/api/efforts/', efforts.createEffort);
 
