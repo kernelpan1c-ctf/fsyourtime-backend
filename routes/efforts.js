@@ -50,7 +50,7 @@ exports.getEffortById = function (req, res) {
         }
     });
 };
-
+//FIXME: just broken...
 exports.getEffortsByModule = function (req, res) {
     // Student can view a list of his efforts when selecting a module
     // Result contains all information about the efforts, however, not all must be used
@@ -96,7 +96,7 @@ exports.getEffortsByModule = function (req, res) {
     // get the information about efforts through population, select only where module is the given moduleid
 };
 
-
+//FIXME: Broken as fuck
 exports.getEffortsByType = function (req, res) {
     // Student can view a list of his efforts when selecting a type
     // Result contains all information about the efforts, however, not all must be used
@@ -151,6 +151,7 @@ exports.getEffortsByType = function (req, res) {
 
  }
  */
+
 exports.createEffort = function(req, res) {
     //console.log(req.body);
     var modId = req.body.moduleid;
@@ -232,6 +233,7 @@ exports.createEffort = function(req, res) {
     });
 };
 
+//FIXME: Broken as Fuck
 exports.updateEffort = function(req, res) {
     var newamount = req.body.amount;
     var newmodule = moduledb.moduleModel.findOne({name: req.body.module});
@@ -252,7 +254,7 @@ exports.updateEffort = function(req, res) {
     });
 };
 
-
+//FIXME: Broken as Fuck
 exports.deleteEffort = function(req, res) {
     effortdb.findByIdAndRemove(req.params.effortid, function (err) {
         if (err) {
@@ -265,7 +267,7 @@ exports.deleteEffort = function(req, res) {
 
 };
 
-
+//FIXME: Broken as Fuck
 exports.deleteAllMyEfforts = function(req, res) {
     effortdb.remove({matricularnr: req.params.matricularnr}, function (err) {
         if (err) {
