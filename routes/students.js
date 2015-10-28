@@ -220,3 +220,27 @@ exports.getMyInfo = function(req,res){
     // populates the student information with the information from course and modules, selecting only name and classOf
 };
 
+exports.changeMyPrivacy = function(req,res){
+	var session = req.headers['jsessionid'];
+    console.log(session);
+	
+	// req.sessionID ??
+	var matricularnr;
+    identdb.findOne({jsession: session }, function (err, identification){
+        if(err) {console.log(err);
+        }
+        else {matricularnr = identification.relmatricularnr;
+        }
+    });
+    // find out which student is logged in
+	
+	studdb.studentModel.findByIdAndUpdate(matricularnr, {privacyFlag: req.body.privacyFlag}, function (err, student) {
+      if (err) {
+           console.log(err);
+                return res.sendStatus(500);
+            }
+    else {
+                return console.log('Success!');
+            }
+                     });	
+};
