@@ -87,6 +87,4 @@ router.put('/api/updateEffort/:effortid', efforts.updateEffort);
 //router.delete('/api/deleteEffort/:effortid', efforts.deleteEffort);
 //router.delete('/api/eff', efforts.deleteAllMyEfforts);
 
-router.post('/api/efforts/', efforts.createEffort);
-
 module.exports = router;
