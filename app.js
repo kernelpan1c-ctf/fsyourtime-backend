@@ -55,10 +55,14 @@ db.once('open', function () {
 });
 
 // ---[ REGISTER ROUTES ]---
-app.use('/', routes);
+
 //app.use('/users', users);
 
 app.use('/api', express.static(__dirname + '/docs'));
+
+app.all('/api/*', [require('./lib/RequestValidator.js')]);
+
+app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

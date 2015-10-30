@@ -46,7 +46,7 @@ exports.createModule = function (req, res) {
 };
 //TODO: not needed, marked for deletion
 exports.deleteModule = function (req, res) {
-    var studentid = req.params.studentid;
+    var studentid = req.headers['x-key'];
     var moduleid = req.params.id;
 
     moduledb.moduleModel.remove({_id: moduleid}, function (err) {
@@ -79,7 +79,7 @@ exports.getModulesByStudent = function (req, res) {
     // Result contains all information about the modules, however, not all must be used
     //var session = req.headers['jsessionid'];
     // req.sessionID ??
-    var studentid = req.params.studentid;
+    var studentid = req.headers['x-key'];
     console.log(studentid);
     studdb.studentModel.find({_id: studentid}).populate('modules').exec(function(err, result) {
         if(err) {
@@ -90,6 +90,7 @@ exports.getModulesByStudent = function (req, res) {
     });
 };
 
+//TODO: not needed? may be deleted
 exports.getModuleById = function (req, res) {
     // Get a Module by ID
     // Result contains all information about the module, however, not all must be used
@@ -103,7 +104,7 @@ exports.getModuleById = function (req, res) {
         }
     });
 };
-//TODO: Errorprone due to types, suggesting deletion
+//TODO: Errorprone due to typos, suggesting deletion
 exports.getModuleByName = function (req, res) {
     // Get a Module by its name
     // Result contains all information about the module, however, not all must be used

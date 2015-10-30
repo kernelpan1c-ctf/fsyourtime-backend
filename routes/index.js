@@ -7,7 +7,7 @@ var modules = require('./modules.js');
 var efforts = require('./efforts.js');
 var efftypes = require('./efftypes.js');
 var sample = require('./sample.js');
-var login = require('./login.js');
+var login = require('./auth.js');
 
 
 /*####### student ########*/
@@ -40,13 +40,12 @@ router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
  * @apiSuccess {Boolean} privacy True if the User has previously accepted privacy statement
  *
  */
-router.post('/api/login', login.login);
-router.post('/api/logout', login.logout);
-
+router.post('/login', login.login);
+router.post('/logout', login.logout);
 router.get('/api/students/:id', students.checkStudent);
 router.get('/sample/create', sample.createSampleData);
 /**
- * @api {get} /modules Get all Modules available in Database
+ * @api {get} /api/modules/student/ Get all Modules available in Database
  * @apiName GetModules
  * @apiGroup Modules
  *
@@ -55,19 +54,16 @@ router.get('/sample/create', sample.createSampleData);
  *
  */
 router.get('/api/modules/student/:studentid', modules.getModulesByStudent);
-//router.get('/api/modules/:id', modules.getModuleById);
-//router.get('/api/modules/:name', modules.getModuleByName);
 router.get('/api/efforts/student/:studentid', efforts.getEffortsByStudent);
 router.get('/api/efforts/:id', efforts.getEffortById);
 router.get('/api/efforts/module/:moduleid', efforts.getEffortsByModule);
-//router.get('/api/efforts/:efftypeid', efforts.getEffortsByType);
 router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 router.get('/api/efforttypes', efftypes.getAllTypes);
 //router.put('/api/changeMyPrivacy', students.changeMyPrivacy);
 //ToDo: Change to REST Stil
 /**
- * @api {post} /efforts Save new effort
+ * @api {post} /api/efforts Save new effort
  * @apiName Create Effort
  * @apiGroup Efforts
  *
