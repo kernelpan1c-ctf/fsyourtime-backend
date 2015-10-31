@@ -9,7 +9,7 @@ var identificationSchema = mongoose.Schema(
         loginDate: {type: Date, expires: '4h', default: Date.now, required: true},
         // bei Login speichert das Dokument die JSessionID, das aktuelle Datum und die Matrikelnummer.
         // Expires bedeutet, dass das Objekt 4 Stunden nach Erstellen geloescht wird
-        studentid: {type: Number, ref:'Student', required: true}
+        studentid: {type: String, ref:'Student', required: true}
     },
     {
         collection: 'identification'

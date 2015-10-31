@@ -29,10 +29,14 @@ exports.login = function (req, res) {
         *
          */
         function(callback) {
+            require('request-debug')(request);
             console.log("Requesting login from " + user + " - Sync?: " + sync);
             request({
-                'uri':'https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + pass,
-                'timeout':5000
+                'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + pass,
+                'timeout':5000,
+                'headers': {
+                    'apiKey': 'd299ef13-a197-4c36-8948-e0112da3bdf2Ä'
+                }
             } , function(err, response, body) {
                 try {
                     var userInfo = JSON.parse(body);
@@ -69,11 +73,13 @@ exports.login = function (req, res) {
             console.log('Requesting Student Data...');
 
 
-            var cookie = "JSESSIONID="+userInfo.sessionid;
+            var cookie = "JSESSIONID="+userInfo.sessionid + "; SERVERID=fs-bl-02";
+            console.log(cookie);
             request({
-                uri: 'https://cert-campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
+                uri: 'https://campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
                 headers: {
-                    "Cookie": cookie
+                    "Cookie": cookie,
+                    "apiKey": "d299ef13-a197-4c36-8948-e0112da3bdf2"
                 }
             }, function(err, response, body) {
                 if(err) {
@@ -82,16 +88,19 @@ exports.login = function (req, res) {
                 }
                 console.log('Student data arrived....');
                 var studentInfo = JSON.parse(body);
+                //console.log(studentInfo);
                 userInfo.matricularnr = studentInfo.matrikelnummer;
+                //console.log(userInfo);
                 return callback(null, userInfo, studentInfo);
+
             });
         },
         //TODO hier funktion für ident table
         function(userInfo, studentInfo, callback) {
             var identEntry = new identdb.identificationModel();
             identEntry.jsession = userInfo.mySessionId;
-            identEntry.studentid = userInfo.matricularnr;
-            console.log(identEntry);
+            identEntry.studentid = userInfo.userid;
+            //console.log(identEntry);
             identEntry.save(function (err, result) {
                 if (err) {
                     console.log(err);
@@ -103,6 +112,7 @@ exports.login = function (req, res) {
         },
         function(userInfo, studentInfo, callback) {
             //console.log(err);
+            if(!studentInfo.success)  return callback("E0002");
             var modules = {};
 
             //console.log("in final function\n" + userInfo);
@@ -138,7 +148,7 @@ exports.login = function (req, res) {
         function(userInfo, callback) {
             async.series([
                 function(callback) {
-                    studentdb.studentModel.count({_id: userInfo.matricularnr}, function(err, count) {
+                    studentdb.studentModel.count({_id: userInfo.userid}, function(err, count) {
                         if(count > 0) {
                             return callback("Student already exists");
                         } else {
@@ -147,8 +157,10 @@ exports.login = function (req, res) {
                     });
                 },
                 function (callback) {
+                    console.log(userInfo);
                     var studentEntry = new studentdb.studentModel();
-                    studentEntry._id = userInfo.matricularnr;
+                    studentEntry._id = userInfo.userid;
+                    studentEntry.studentid = userInfo.martrilucarnr;
                     var module_ids = [];
                     for(var module_item in userInfo.modules) {
                         module_ids.push(userInfo.modules[module_item].m_id);
@@ -231,14 +243,36 @@ exports.login = function (req, res) {
         if(err) {
             if(err == "E0000") res.status(403).send("Wrong Username or Password. Please try again.");
             if(err == "E0001") {
-                studentdb.studentModel.find
-                res.status(200).send(result);
+                studentdb.studentModel.findOne({_id: result.userid}, function(err, student) {
+                    if(!student) res.status(500).send("Duduuuum");
+                    if(student) {
+                        //console.log(student);
+                        result.privacy = student.privacyFlag;
+                        //console.log(result);
+                        res.status(200).send(result);
+                    }
+                });
             }
-            if(err == "E0002") res.status(500).send("Failed to fetch Modules. Please login again. If the error persists, contact you Systemadministrator");
+            if(err == "E0002")
+            {
+                res.status(500).send("Failed to fetch Modules. Please login again. If the error persists, contact you Systemadministrator");
+            }
             if(err == "E0003") res.status(500).send("Failed validate login against efiport.");
 
+        } else if (result) {
+
+            console.log(result);
+
+            studentdb.studentModel.findOne({_id: result.userid}, function (err, student) {
+                if (!student) res.status(500).send("Duduuuum");
+                if (student) {
+                    //console.log(student);
+                    result.privacy = student.privacyFlag;
+                    //console.log(result);
+                    res.status(200).send(result);
+                }
+            });
         }
-        //res.send(result);
 
         console.log("Done...");
     });
