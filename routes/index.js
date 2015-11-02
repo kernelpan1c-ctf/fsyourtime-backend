@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
+
 //Routes
 var students = require('./students.js');
 var modules = require('./modules.js');
 var efforts = require('./efforts.js');
 var efftypes = require('./efftypes.js');
-var sample = require('./sample.js');
+var sample = require('./sample1.js');
 var login = require('./auth.js');
 
 
@@ -55,8 +56,26 @@ router.get('/sample/create', sample.createSampleData);
  */
 router.get('/api/modules/student/:studentid', modules.getModulesByStudent);
 router.get('/api/efforts/student/:studentid', efforts.getEffortsByStudent);
-router.get('/api/efforts/:id', efforts.getEffortById);
-router.get('/api/efforts/module/:moduleid', efforts.getEffortsByModule);
+router.get('/api/efforts/:effortid', efforts.getEffortById);
+/**
+ * @api {get} /api/efforts/module/:moduleid/:studentid Get efforts by module and student
+ * @apiName Get Efforts By Module
+ * @apiGroup Efforts
+ *
+ * @apiSuccess {Boolean} success true, if module was saved
+ * @apiSuccess {String} id ID if effort
+ *
+ * @apiParam {String} moduleid Module of the effort
+ * @apiParam {String} studentid Creator of the effort
+ *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
+ *      "studentid":"1234567",
+ *  }
+ *
+ */
+router.get('/api/efforts/module/:moduleid/:studentid', efforts.getEffortsByModule);
 router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 router.get('/api/efforttypes', efftypes.getAllTypes);
@@ -73,16 +92,46 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  * @apiParam {Integer} amount Booked time in Minutes
  * @apiParam {String} moduleid Module for the effort
  * @apiParam {String} studentid Creator of the effort
+ * @apiParam {String} efftypeid Type of the effort
+ * @apiParam {String} performancedate Date on which the effort was done
+ * @apiParam {String} [place] Place of the effort, empty if not set
+ * @apiParam {String} [material] Material of the effort, empty if not set
  *
  * @apiParamExample {json} Request-Example:
  *  {
  *      "amount":"20",
  *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
- *      "studentid":"1234567"
+ *      "studentid":"1234567",
+ *      "efforttypeid":"56257c4c1f7b6687091d2c06"
  *  }
  *
  */
 router.post('/api/efforts', efforts.createEffort);
+/**
+ * @api {put} /api/updateEffort/:effortid Update existing effort
+ * @apiName Update Effort
+ * @apiGroup Efforts
+ *
+ * @apiSuccess {Boolean} success true, if module was saved
+ * @apiSuccess {String} id ID if effort
+ *
+ * @apiParam {Integer} amount Booked time in Minutes
+ * @apiParam {String} moduleid Module for the effort
+ * @apiParam {String} studentid Creator of the effort
+ * @apiParam {String} efftypeid Type of the effort
+ * @apiParam {String} performancedate Date on which the effort was done
+ * @apiParam {String} [place] Place of the effort, empty if not set
+ * @apiParam {String} [material] Material of the effort, empty if not set
+ *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *      "amount":"20",
+ *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
+ *      "studentid":"1234567",
+ *      "efforttypeid":"56257c4c1f7b6687091d2c06"
+ *  }
+ *
+ */
 router.put('/api/updateEffort/:effortid', efforts.updateEffort);
 //router.delete('/api/deleteEffort/:effortid', efforts.deleteEffort);
 //router.delete('/api/eff', efforts.deleteAllMyEfforts);
