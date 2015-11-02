@@ -100,7 +100,6 @@ exports.login = function (req, res) {
             var identEntry = new identdb.identificationModel();
             identEntry.jsession = userInfo.mySessionId;
             identEntry.studentid = userInfo.userid;
-            //console.log(identEntry);
             identEntry.save(function (err, result) {
                 if (err) {
                     console.log(err);
@@ -244,10 +243,11 @@ exports.login = function (req, res) {
             if(err == "E0000") res.status(403).send("Wrong Username or Password. Please try again.");
             if(err == "E0001") {
                 studentdb.studentModel.findOne({_id: result.userid}, function(err, student) {
-                    if(!student) res.status(500).send("Duduuuum");
+                    if(!student) res.status(500).send("Modules have not been synced yet. Please login again and check the 'syncdata' button");
                     if(student) {
                         //console.log(student);
                         result.privacy = student.privacyFlag;
+                        result.matricularnr = student.matricularnr;
                         //console.log(result);
                         res.status(200).send(result);
                     }
@@ -264,7 +264,7 @@ exports.login = function (req, res) {
             console.log(result);
 
             studentdb.studentModel.findOne({_id: result.userid}, function (err, student) {
-                if (!student) res.status(500).send("Duduuuum");
+                if (!student) res.status(500).send("Flopped");
                 if (student) {
                     //console.log(student);
                     result.privacy = student.privacyFlag;
@@ -279,6 +279,14 @@ exports.login = function (req, res) {
 }
 
 exports.logout = function (req, res) {
-    return res.status(200).send('User successfully logged out');
+    var session = req.body.session;
+    identdb.identificationModel.findOneAndRemove({jsession: session}, function(err, result){
+        if(err) res.status(500).send("Something went wrong");
+        if(!result) res.status(404).send("Session not found");
+        if(result) {
+            return res.status(200).send('User successfully logged out' + result);
+        }
+    });
+
 }
 
