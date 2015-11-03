@@ -81,11 +81,11 @@ exports.getModulesByStudent = function (req, res) {
     // req.sessionID ??
     var studentid = req.headers['x-key'];
     console.log(studentid);
-    studdb.studentModel.find({_id: studentid}).populate('modules').exec(function(err, result) {
+    studdb.studentModel.findOne({_id: studentid}).populate('modules').exec(function(err, result) {
         if(err) {
             res.status(500).send(err);
         } else {
-            res.status(200).send(result[0].modules);
+            res.status(200).send(result.modules);
         }
     });
 };

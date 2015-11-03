@@ -23,7 +23,7 @@ router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
 /**
  * @api {post} /login Login
  * @apiName Login
- * @apiGroup General
+ * @apiGroup 01 General
  *
  * @apiParam username FSCampus Username
  * @apiParam password FSCampus Password
@@ -44,6 +44,8 @@ router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
 router.post('/login', login.login);
 /**
  * @api {post} /logout Logut
+ * @apiName Logout
+ * @apiGroup 01 General
  *
  * @apiHeader {String} x-session SessionID
  *
@@ -52,27 +54,34 @@ router.post('/logout', login.logout);
 router.get('/api/students/:id', students.checkStudent);
 router.get('/sample/create', sample.createSampleData);
 /**
- * @api {get} /api/modules/student/ Get all Modules available in Database
+ * @api {get} /api/modules/student/ Get all Modules per Student
  * @apiName GetModules
- * @apiGroup Modules
+ * @apiGroup 02 Modules
  *
  * @apiSuccess {String} id ModuleID
  * @apiSuccess {String} name Module Name
  *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
  */
-router.get('/api/modules/student/:studentid', modules.getModulesByStudent);
-router.get('/api/efforts/student/:studentid', efforts.getEffortsByStudent);
+router.get('/api/modules/student/', modules.getModulesByStudent);
+router.get('/api/efforts/student/', efforts.getEffortsByStudent);
 router.get('/api/efforts/:effortid', efforts.getEffortById);
 /**
  * @api {get} /api/efforts/module/:moduleid/:studentid Get efforts by module and student
  * @apiName Get Efforts By Module
- * @apiGroup Efforts
+ * @apiGroup 03 Efforts
  *
  * @apiSuccess {Boolean} success true, if module was saved
  * @apiSuccess {String} id ID if effort
  *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
  * @apiParam {String} moduleid Module of the effort
  * @apiParam {String} studentid Creator of the effort
+ *
  *
  * @apiParamExample {json} Request-Example:
  *  {
@@ -81,7 +90,7 @@ router.get('/api/efforts/:effortid', efforts.getEffortById);
  *  }
  *
  */
-router.get('/api/efforts/module/:moduleid/:studentid', efforts.getEffortsByModule);
+router.get('/api/efforts/module/:moduleid/', efforts.getEffortsByModule);
 router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 router.get('/api/efforttypes', efftypes.getAllTypes);
@@ -90,10 +99,13 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
 /**
  * @api {post} /api/efforts Save new effort
  * @apiName Create Effort
- * @apiGroup Efforts
+ * @apiGroup 03 Efforts
  *
  * @apiSuccess {Boolean} success true, if module was saved
  * @apiSuccess {String} id ID if effort
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  * @apiParam {Integer} amount Booked time in Minutes
  * @apiParam {String} moduleid Module for the effort
@@ -116,10 +128,13 @@ router.post('/api/efforts', efforts.createEffort);
 /**
  * @api {put} /api/updateEffort/:effortid Update existing effort
  * @apiName Update Effort
- * @apiGroup Efforts
+ * @apiGroup 03 Efforts
  *
  * @apiSuccess {Boolean} success true, if module was saved
  * @apiSuccess {String} id ID if effort
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  * @apiParam {Integer} amount Booked time in Minutes
  * @apiParam {String} moduleid Module for the effort
