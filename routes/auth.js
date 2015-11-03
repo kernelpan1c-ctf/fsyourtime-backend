@@ -291,7 +291,10 @@ exports.logout = function (req, res) {
         if(err) res.status(500).send("Something went wrong");
         if(!result) res.status(404).send("Session not found");
         if(result) {
-            return res.status(200).send('User successfully logged out' + result);
+            console.log("Found User. Logged Out");
+            console.log("Sending....\n");
+            console.log(res);
+            return res.status(200).send('User successfully logged out ' + result.studentid);
         }
     });
 
