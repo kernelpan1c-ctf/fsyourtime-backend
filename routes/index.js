@@ -7,7 +7,7 @@ var students = require('./students.js');
 var modules = require('./modules.js');
 var efforts = require('./efforts.js');
 var efftypes = require('./efftypes.js');
-var sample = require('./sample1.js');
+//var sample = require('./sample1.js');
 var login = require('./auth.js');
 
 
