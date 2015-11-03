@@ -9,6 +9,8 @@ var request = require('request');
 var async = require('async');
 var crypto = require('crypto');
 
+//TODO: Implement logging and replace "console.log" with logger
+
 exports.login = function (req, res) {
     //console.log(req);
     var user = req.body.username;
@@ -29,7 +31,7 @@ exports.login = function (req, res) {
         *
          */
         function(callback) {
-            require('request-debug')(request);
+            //require('request-debug')(request);
             console.log("Requesting login from " + user + " - Sync?: " + sync);
             request({
                 'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + pass,
@@ -56,7 +58,7 @@ exports.login = function (req, res) {
             });
         },
         function(user, pass, userinfo ,callback) {
-            console.log(userinfo);
+            //console.log(userinfo);
             var sessionBuffer = new Buffer(user+pass+userinfo.sessionid);
             var hashedSessionBuffer = crypto.createHash('sha256').update(sessionBuffer).digest('hex').toUpperCase();
             console.log('New user created. SessionID: ' + hashedSessionBuffer);
@@ -74,7 +76,7 @@ exports.login = function (req, res) {
 
 
             var cookie = "JSESSIONID="+userInfo.sessionid + "; SERVERID=fs-bl-02";
-            console.log(cookie);
+            //console.log(cookie);
             request({
                 uri: 'https://campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
                 headers: {
@@ -142,8 +144,6 @@ exports.login = function (req, res) {
             userInfo.modules = modules;
             return callback(null, userInfo);
         },
-        //TODO: funktion student speichern mit ids von modulen
-        //TODO: holen und verarbeiten in einer funktion
         function(userInfo, callback) {
             async.series([
                 function(callback) {
@@ -156,10 +156,10 @@ exports.login = function (req, res) {
                     });
                 },
                 function (callback) {
-                    console.log(userInfo);
+                    //console.log(userInfo);
                     var studentEntry = new studentdb.studentModel();
                     studentEntry._id = userInfo.userid;
-                    studentEntry.studentid = userInfo.martrilucarnr;
+                    studentEntry.matricularnr = userInfo.matricularnr;
                     var module_ids = [];
                     for(var module_item in userInfo.modules) {
                         module_ids.push(userInfo.modules[module_item].m_id);
@@ -188,6 +188,7 @@ exports.login = function (req, res) {
 
         },
         function(userinfo, callback) {
+            //console.log(userinfo);
             async.each(userinfo.modules, function(moduleinfo, callback) {
                 //here goes calls to save all modules in the database...
                 //console.log(JSON.stringify(moduleinfo, null, 3));
@@ -219,8 +220,9 @@ exports.login = function (req, res) {
                         });
                     }
                 ], function(err, result) {
+                    //console.log(result);
                     if(err) console.log(err);
-                    else if(result['worked'] == true) console.log("Success! Added Module " + result['added_module']);
+                    else if(result[1]['worked']) console.log("Success! Added Module " + result[0]['added_module']);
                     return callback();
                 });
             }, function(err) {
@@ -234,11 +236,10 @@ exports.login = function (req, res) {
 
         }
     ], function(err, result) {
-        if(result) {
-            //console.log(result);
-            delete result.modules;
-            delete result.sessionid;
-        }
+        //console.log("----[ ERR ]----");
+        //console.log(err);
+        //console.log("----[ RESULT ]----");
+        //console.log(result);
         if(err) {
             if(err == "E0000") res.status(403).send("Wrong Username or Password. Please try again.");
             if(err == "E0001") {
@@ -248,6 +249,7 @@ exports.login = function (req, res) {
                         //console.log(student);
                         result.privacy = student.privacyFlag;
                         result.matricularnr = student.matricularnr;
+                        //console.log(result);
                         //console.log(result);
                         res.status(200).send(result);
                     }
@@ -260,8 +262,12 @@ exports.login = function (req, res) {
             if(err == "E0003") res.status(500).send("Failed validate login against efiport.");
 
         } else if (result) {
+            if(result.length > 1) result = result[1];
+            //console.log("I'm here");
+            delete result.modules;
+            delete result.sessionid;
 
-            console.log(result);
+            //console.log(result.length);
 
             studentdb.studentModel.findOne({_id: result.userid}, function (err, student) {
                 if (!student) res.status(500).send("Flopped");

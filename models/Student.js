@@ -10,6 +10,7 @@ var studentSchema = mongoose.Schema(
         modules: [{type: String, ref: 'Module'}],
         //efforts: [{type: mongoose.Schema.Types.ObjectId, ref: 'Effort'}],
         privacyFlag: {type: Boolean, default: false, required: true},
+        matricularnr: {type: String, required: true}
         //modulesFetched: {type: Boolean, default: false, required: true}
     },
     {
