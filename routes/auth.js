@@ -222,7 +222,7 @@ exports.login = function (req, res) {
                 ], function(err, result) {
                     //console.log(result);
                     if(err) console.log(err);
-                    else if(result[1]['worked']) console.log("Success! Added Module " + result[0]['added_module']);
+                    else if(result[1]['worked']) console.log("Success! Added Module " + result[1]['added_module']);
                     return callback();
                 });
             }, function(err) {
