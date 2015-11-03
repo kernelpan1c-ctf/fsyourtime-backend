@@ -42,6 +42,12 @@ router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
  *
  */
 router.post('/login', login.login);
+/**
+ * @api {post} /logout Logut
+ *
+ * @apiHeader {String} x-session SessionID
+ *
+ */
 router.post('/logout', login.logout);
 router.get('/api/students/:id', students.checkStudent);
 router.get('/sample/create', sample.createSampleData);
