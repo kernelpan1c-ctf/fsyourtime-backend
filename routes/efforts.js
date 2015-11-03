@@ -51,7 +51,7 @@ exports.getEffortById = function (req, res) {
         }
     });
 };
-//FIXME: just broken...
+
 exports.getEffortsByModule = function (req, res) {
     // Student can view a list of his efforts for one selected module
     // Result contains all information about the efforts, however, not all must be used
