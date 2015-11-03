@@ -285,7 +285,7 @@ exports.login = function (req, res) {
 }
 
 exports.logout = function (req, res) {
-    var session = req.body.session;
+    var session = req.headers["x-session"];
     console.log(session);
     identdb.identificationModel.findOneAndRemove({jsession: session}, function(err, result){
         if(err) res.status(500).send("Something went wrong");
