@@ -4,6 +4,7 @@ var coursedb = require('../models/Course.js');
 var moduledb = require('../models/Module.js');
 var effortdb = require('../models/Effort.js');
 var effortCatdb = require('../models/EffCategory.js');
+var async = require('async');
 //var db = require('../db');
 
 exports.clear = function () {
@@ -186,6 +187,36 @@ exports.checkStudent = function (req, res) {
             return res.status(200).send(student);
         }
     });
+};
+
+exports.updateStudent = function (req, res) {
+    var studentID = req.params.studentid;
+    var privacyFlag = req.body.privacyflag;
+    console.log("studentid: " + studentID);
+	console.log("privacy: " + privacyFlag);
+    
+
+    studdb.studentModel.findById(studentID, function(err, studi) {
+        if (err) {
+            console.log(err);
+            return res.status(404).send(err);
+        } else if (studi == undefined) {
+            return res.status(404).send('Student not in database');
+        } else {
+			console.log(studi);
+			studi.privacyFlag = privacyFlag;
+			studi.save(function(err, result) {
+                if(err) res.status(500).send("Failed to update effort");
+                else if(result) {
+                    var message = {};
+                    message.success = true;
+                    message.id = result._id;
+                    res.status(200).send(message);
+                }
+            })
+        }
+    });
+	return;
 };
 
 exports.getMyInfo = function(req,res){
