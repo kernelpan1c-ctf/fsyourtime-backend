@@ -167,7 +167,7 @@ exports.dummy = function (req, res) {
 
 exports.checkStudent = function (req, res) {
     console.log('I was just called :O');
-    var studentID = req.params.id;
+    var studentID = req.headers['x-key'];
 
     console.log("studentid: " + studentID);
     //console.log("reqstudentid: " + reqStudent._id);

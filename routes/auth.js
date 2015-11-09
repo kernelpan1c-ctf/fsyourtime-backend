@@ -90,6 +90,7 @@ exports.login = function (req, res) {
                 }
                 console.log('Student data arrived....');
                 var studentInfo = JSON.parse(body);
+                if(!studentInfo.success)  return callback("E0002");
                 //console.log(studentInfo);
                 userInfo.matricularnr = studentInfo.matrikelnummer;
                 //console.log(userInfo);
@@ -113,7 +114,7 @@ exports.login = function (req, res) {
         },
         function(userInfo, studentInfo, callback) {
             //console.log(err);
-            if(!studentInfo.success)  return callback("E0002");
+
             var modules = {};
 
             //console.log("in final function\n" + userInfo);
@@ -133,7 +134,8 @@ exports.login = function (req, res) {
                                     'm_year': module.year,
                                     'm_effort_assignment': module.assignments,
                                     'm_effort_idependent': module.independenthours,
-                                    'm_effort_contact': module.contacthours
+                                    'm_effort_contact': module.contacthours,
+                                    'm_effort_total':module.workload
                                 };
                             }
                         });
@@ -208,6 +210,7 @@ exports.login = function (req, res) {
                         mod.assignmentHours = moduleinfo.m_effort_assignment;
                         mod.contactHours = moduleinfo.m_effort_contact;
                         mod.independentHours = moduleinfo.m_effort_idependent;
+                        mod.workloadHours = moduleinfo.m_effort_total;
                         mod.name = moduleinfo.m_name;
                         mod.save(function (err) {
                             if (err) {
