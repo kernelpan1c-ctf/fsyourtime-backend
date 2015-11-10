@@ -35,14 +35,16 @@ exports.login = function (req, res) {
             console.log("Requesting login from " + user + " - Sync?: " + sync);
             request({
                 'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + pass,
-                'timeout':5000,
+                'timeout':100000,
                 'headers': {
-                    'apiKey': 'd299ef13-a197-4c36-8948-e0112da3bdf2Ä'
+                    'apiKey': 'd299ef13-a197-4c36-8948-e0112da3bdf2'
                 }
             } , function(err, response, body) {
                 try {
                     var userInfo = JSON.parse(body);
                 } catch (e) {
+                    console.log(e);
+                    console.log(body);
                     return callback("E0003");
                 }
                 console.log('Did it work? ' + userInfo.success);
@@ -108,6 +110,7 @@ exports.login = function (req, res) {
                     console.log(err);
                     return callback("Fucked UP!");
                 } else {
+                    console.log(result);
                     return callback(null, userInfo, studentInfo);
                 }
             });
@@ -288,7 +291,8 @@ exports.login = function (req, res) {
 }
 
 exports.logout = function (req, res) {
-    var session = req.headers["x-session"];
+    //console.log(req);
+    var session = req.headers['X-Access-Token'];
     console.log(session);
     identdb.identificationModel.findOneAndRemove({jsession: session}, function(err, result){
         if(err) res.status(500).send("Something went wrong");
