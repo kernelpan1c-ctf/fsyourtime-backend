@@ -47,10 +47,10 @@ router.post('/login', login.login);
  * @apiName Logout
  * @apiGroup 01 General
  *
- * @apiHeader X-Access-Token SessionID
+ * @apiHeader x-session SessionID
  *
  */
-router.get('/logout', login.logout);
+router.post('/logout', login.logout);
 router.get('/api/students/', students.checkStudent);
 router.get('/sample/create', sample.createSampleData);
 /**
@@ -61,8 +61,8 @@ router.get('/sample/create', sample.createSampleData);
  * @apiSuccess {String} id ModuleID
  * @apiSuccess {String} name Module Name
  *
- * @apiHeader X-Access-Token Session ID
- * @apiHeader X-Key User ID (NOT Matricular-#!)
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  */
 router.get('/api/modules/student/', modules.getModulesByStudent);
@@ -76,8 +76,8 @@ router.get('/api/efforts/:effortid', efforts.getEffortById);
  * @apiSuccess {Boolean} success true, if module was saved
  * @apiSuccess {String} id ID if effort
  *
- * @apiHeader X-Access-Token Session ID
- * @apiHeader X-Key User ID (NOT Matricular-#!)
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  * @apiParam {String} moduleid Module of the effort
  * @apiParam {String} studentid Creator of the effort
@@ -104,8 +104,8 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  * @apiSuccess {Boolean} success true, if module was saved
  * @apiSuccess {String} id ID if effort
  *
- * @apiHeader X-Access-Token Session ID
- * @apiHeader X-Key User ID (NOT Matricular-#!)
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  * @apiParam {Integer} amount Booked time in Minutes
  * @apiParam {String} moduleid Module for the effort
@@ -133,8 +133,8 @@ router.post('/api/efforts', efforts.createEffort);
  * @apiSuccess {Boolean} success true, if module was saved
  * @apiSuccess {String} id ID if effort
  *
- * @apiHeader X-Access-Token Session ID
- * @apiHeader X-Key User ID (NOT Matricular-#!)
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  * @apiParam {Integer} amount Booked time in Minutes
  * @apiParam {String} moduleid Module for the effort
