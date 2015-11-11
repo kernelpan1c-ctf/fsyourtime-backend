@@ -70,6 +70,7 @@ exports.login = function (req, res) {
         },
         function(userInfo, callback) {
             if(!sync) {
+                console.log("Skipping module request");
                 return callback(null, userInfo, null);
             }
 
