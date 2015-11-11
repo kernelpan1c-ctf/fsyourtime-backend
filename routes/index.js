@@ -69,7 +69,7 @@ router.get('/api/modules/student/', modules.getModulesByStudent);
 router.get('/api/efforts/student/', efforts.getEffortsByStudent);
 router.get('/api/efforts/:effortid', efforts.getEffortById);
 /**
- * @api {get} /api/efforts/module/:moduleid/:studentid Get efforts by module and student
+ * @api {get} /api/efforts/module/:moduleid Get efforts by module and student
  * @apiName Get Efforts By Module
  * @apiGroup 03 Efforts
  *
