@@ -69,7 +69,7 @@ exports.login = function (req, res) {
         },
         function(userInfo, callback) {
             if(!sync) {
-                return callback("E0001", userInfo);
+                return callback(userInfo, null, sync);
             }
 
             console.log('Backend Session ID: ' + userInfo.mySessionId);
@@ -92,7 +92,9 @@ exports.login = function (req, res) {
                 }
                 console.log('Student data arrived....');
                 var studentInfo = JSON.parse(body);
-                if(!studentInfo.success)  return callback("E0002");
+                if(!studentInfo.success) {
+                    return callback("E0002", body);
+                }
                 //console.log(studentInfo);
                 userInfo.matricularnr = studentInfo.matrikelnummer;
                 //console.log(userInfo);
@@ -101,7 +103,7 @@ exports.login = function (req, res) {
             });
         },
         //TODO hier funktion für ident table
-        function(userInfo, studentInfo, callback) {
+        function(userInfo, studentInfo, sync, callback) {
             var identEntry = new identdb.identificationModel();
             identEntry.jsession = userInfo.mySessionId;
             identEntry.studentid = userInfo.userid;
@@ -111,6 +113,7 @@ exports.login = function (req, res) {
                     return callback("Fucked UP!");
                 } else {
                     console.log(result);
+                    if(!sync) callback("E0001");
                     return callback(null, userInfo, studentInfo);
                 }
             });
@@ -263,6 +266,7 @@ exports.login = function (req, res) {
             }
             if(err == "E0002")
             {
+                console.log(result);
                 res.status(500).send("Failed to fetch Modules. Please login again. If the error persists, contact you Systemadministrator");
             }
             if(err == "E0003") res.status(500).send("Failed validate login against efiport.");
