@@ -34,7 +34,7 @@ exports.login = function (req, res) {
             //require('request-debug')(request);
             console.log("Requesting login from " + user + " - Sync?: " + sync);
             request({
-                'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + pass,
+                'uri':'https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + pass,
                 'timeout':100000,
                 'headers': {
                     'apiKey': 'd299ef13-a197-4c36-8948-e0112da3bdf2'
@@ -42,6 +42,7 @@ exports.login = function (req, res) {
             } , function(err, response, body) {
                 try {
                     var userInfo = JSON.parse(body);
+                    userInfo.sync = sync;
                 } catch (e) {
                     console.log(e);
                     console.log(body);
@@ -69,7 +70,7 @@ exports.login = function (req, res) {
         },
         function(userInfo, callback) {
             if(!sync) {
-                return callback(userInfo, null, sync);
+                return callback(null, userInfo, null);
             }
 
             console.log('Backend Session ID: ' + userInfo.mySessionId);
@@ -80,7 +81,7 @@ exports.login = function (req, res) {
             var cookie = "JSESSIONID="+userInfo.sessionid + "; SERVERID=fs-bl-02";
             //console.log(cookie);
             request({
-                uri: 'https://campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
+                uri: 'https://cert-campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
                 headers: {
                     "Cookie": cookie,
                     "apiKey": "d299ef13-a197-4c36-8948-e0112da3bdf2"
@@ -103,7 +104,7 @@ exports.login = function (req, res) {
             });
         },
         //TODO hier funktion für ident table
-        function(userInfo, studentInfo, sync, callback) {
+        function(userInfo, studentInfo, callback) {
             var identEntry = new identdb.identificationModel();
             identEntry.jsession = userInfo.mySessionId;
             identEntry.studentid = userInfo.userid;
@@ -113,8 +114,12 @@ exports.login = function (req, res) {
                     return callback("Fucked UP!");
                 } else {
                     console.log(result);
-                    if(!sync) callback("E0001");
-                    return callback(null, userInfo, studentInfo);
+                    console.log(userInfo.sync);
+                    if(!userInfo.sync) {
+                        return callback("E0001", userInfo);
+                    } else {
+                        return callback(null, userInfo, studentInfo);
+                    }
                 }
             });
         },
