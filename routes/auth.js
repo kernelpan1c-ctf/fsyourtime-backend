@@ -69,7 +69,7 @@ exports.login = function (req, res) {
             return callback(null, userinfo);
         },
         function(userInfo, callback) {
-            if(!sync) {
+            if(!userInfo.sync) {
                 console.log("Skipping module request");
                 return callback(null, userInfo, null);
             }
