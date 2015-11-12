@@ -105,6 +105,8 @@ exports.createEffort = function(req, res) {
 
     if(!modId || !studId || !efftypeId) {
         return res.status(400).send("One of the parameters was undefined");
+    } else if(!amount || amount < 1) {
+            res.status(400).send("Amount has to be greater or equal to 1");
     }
 
     async.parallel([
