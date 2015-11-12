@@ -91,7 +91,7 @@ router.get('/api/modules/student/', modules.getModulesByStudent);
  *
  *
  */
-router.get('/api/efforts/student/:matricularnr', efforts.getEffortsByStudent);
+router.get('/api/efforts/student/', efforts.getEffortsByStudent);
 /**
  * @api {get} /api/efforts/:effortid Get effort by ID
  * @apiName Get Effort By ID
@@ -115,7 +115,7 @@ router.get('/api/efforts/student/:matricularnr', efforts.getEffortsByStudent);
  *
  *
  */
-router.get('/api/efforts/:effortid', efforts.getEffortById);
+router.get('/api/efforts/', efforts.getEffortById);
 /**
  * @api {get} /api/efforts/module/:moduleid/:matricularnr Get efforts by module and student
  * @apiName Get Efforts (Array) By Module

@@ -103,6 +103,10 @@ exports.createEffort = function(req, res) {
     var studId = req.body.studentid;
 	var efftypeId = req.body.efforttypeid;
 
+    if(!modId || !studId || !efftypeId) {
+        res.status(400).send("One of the parameters was undefined");
+    }
+
     async.parallel([
         function(callback) {
 
