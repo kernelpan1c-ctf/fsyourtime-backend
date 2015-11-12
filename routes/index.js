@@ -159,7 +159,7 @@ router.get('/api/efforts/module/:moduleid/:matricularnr', efforts.getEffortsByMo
  * @apiParam {Integer} amount Booked time in Minutes, in Body
  * @apiParam {String} moduleid Module for the effort, in Body
  * @apiParam {String} studentid Creator of the effort, in Body
- * @apiParam {String} efftypeid Type of the effort, in Body
+ * @apiParam {String} efforttypeid Type of the effort, in Body
  * @apiParam {String} performancedate Date on which the effort was done (YYY-MM-DD), in Body
  * @apiParam {String} [place] Place of the effort, empty if not set, in Body
  * @apiParam {String} [material] Material of the effort, empty if not set, in Body
@@ -191,7 +191,7 @@ router.post('/api/efforts', efforts.createEffort);
  * @apiParam {Integer} amount Booked time in Minutes, in Body
  * @apiParam {String} moduleid Module for the effort, in Body
  * @apiParam {String} studentid Creator of the effort, in Body
- * @apiParam {String} efftypeid Type of the effort, in Body
+ * @apiParam {String} efforttypeid Type of the effort, in Body
  * @apiParam {String} performancedate Date on which the effort was done (YYY-MM-DD), in Body
  * @apiParam {String} [place] Place of the effort, empty if not set, in Body
  * @apiParam {String} [material] Material of the effort, empty if not set, in Body
