@@ -100,7 +100,7 @@ exports.getEffortsByModule = function (req, res) {
 exports.createEffort = function(req, res) {
     //console.log(req.body);
     var modId = req.body.moduleid;
-    var studId = req.body.studentid;
+    var studId = req.headers['x-key'];
 	var efftypeId = req.body.efforttypeid;
     var amount = req.body.amount;
     var performanceDate = req.body.performancedate || Date.now();
@@ -112,11 +112,11 @@ exports.createEffort = function(req, res) {
     if(!amount || amount < 1) {
         return res.status(400).send("Amount has to be greater or equal to 1");
     }
-
+    /*
     if(!performanceDate) {
         return res.status(400).send("Performance Date has to be set");
     }
-
+    */
     async.parallel([
         function(callback) {
 
@@ -125,7 +125,7 @@ exports.createEffort = function(req, res) {
                 if (err) {
                     return callback(err);
                 }
-                if (result == undefined) {
+                if (!result) {
                     return callback("Module not found");
                 } else {
                     return callback(null, result);
@@ -151,7 +151,7 @@ exports.createEffort = function(req, res) {
                 if (err) {
                     return callback(err);
                 }
-                if (result == undefined) {
+                if (!result) {
                     return callback("Effort Type not found");
                 } else {
                     return callback(null, result);
@@ -164,14 +164,15 @@ exports.createEffort = function(req, res) {
             console.log('We have an error: ' + err);
             res.status(500).send('I fucked this up :(');
         }
+        console.log(result);
         if(results.length == 3) {
             //result[0] = Module, result[1] = Student, result[2] = EffortType
             var newEffort = new effortdb.effortModel();
-            newEffort.amount = req.body.amount;
+            newEffort.amount = amount;
             newEffort.module = results[0]["_id"];
             newEffort.createdBy = results[1]["_id"];
 			newEffort.type = results[2]["_id"];
-			newEffort.performanceDate = new Date(req.body.performancedate); 
+			newEffort.performanceDate = new Date(performanceDate);
 			// "<YYYY-mm-dd>" Format
 			if(req.body.material) {
                 newEffort.material = req.body.material;

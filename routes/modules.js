@@ -70,10 +70,6 @@ exports.deleteModule = function (req, res) {
     })
 };
 
-exports.updateModule = function (req, res) {
-    console.log("update");
-};
-
 exports.getModulesByStudent = function (req, res) {
     // Student can view a list of his modules
     // Result contains all information about the modules, however, not all must be used
@@ -86,34 +82,6 @@ exports.getModulesByStudent = function (req, res) {
             res.status(500).send(err);
         } else {
             res.status(200).send(result.modules);
-        }
-    });
-};
-
-//TODO: not needed? may be deleted
-exports.getModuleById = function (req, res) {
-    // Get a Module by ID
-    // Result contains all information about the module, however, not all must be used
-    console.log("Looking for module: " + req.params.id);
-    moduledb.moduleModel.findById(req.params.id, function (err, module) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.json(module)
-        }
-    });
-};
-//TODO: Errorprone due to typos, suggesting deletion
-exports.getModuleByName = function (req, res) {
-    // Get a Module by its name
-    // Result contains all information about the module, however, not all must be used
-    moduledb.moduleModel.findOne({name: req.params.name}, function (err, module) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.json(module)
         }
     });
 };
