@@ -35,7 +35,7 @@ exports.getEffortsByStudent = function (req, res) {
     ], function (err, result) {
         console.log("Done. Sending results.");
         if(err) res.status(500).send(err);
-        else if(result) res.status(200).send(result);
+        else if(result) res.status(200).send(result[1]);
     });
 };
 
@@ -85,7 +85,7 @@ exports.getEffortsByModule = function (req, res) {
         function(callback) {
             effortdb.effortModel.find( { createdBy: studentId, module: moduleId }, function(err, result) {
                 if(err) console.log(err);
-                else callback(null, result);
+                else callback(null, result[1]);
             });
         }
     ], function (err, result) {
