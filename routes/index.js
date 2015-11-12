@@ -69,7 +69,7 @@ router.get('/sample/create', sample.createSampleData);
  */
 router.get('/api/modules/student/', modules.getModulesByStudent);
 /**
- * @api {get} /api/efforts/student/:matricularnr Get efforts by student
+ * @api {get} /api/efforts/student/ Get efforts by student
  * @apiName Get Efforts (Array) By Student
  * @apiGroup 03 Efforts
  *

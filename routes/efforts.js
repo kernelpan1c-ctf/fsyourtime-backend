@@ -12,7 +12,7 @@ var async = require('async');
 exports.getEffortsByStudent = function (req, res) {
     // Student can view a list of his efforts
     // Result contains all information about the efforts, however, not all must be used
-    var studentId = req.params.studentid;
+    var studentId = req.headers['x-key'];
     async.series([
         function(callback) {
             console.log("Checking for student: " + studentId);
