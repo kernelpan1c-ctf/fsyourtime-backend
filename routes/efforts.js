@@ -85,7 +85,7 @@ exports.getEffortsByModule = function (req, res) {
         function(callback) {
             effortdb.effortModel.find( { createdBy: studentId, module: moduleId }, function(err, result) {
                 if(err) console.log(err);
-                else callback(result);
+                else callback(null, result);
             });
         }
     ], function (err, result) {
