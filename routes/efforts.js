@@ -288,7 +288,8 @@ exports.deleteEffort = function(req, res) {
 };
 
 
-/*exports.deleteAllMyEfforts = function(req, res) {
+/**
+exports.deleteAllMyEfforts = function(req, res) {
     effortdb.remove({matricularnr: req.params.matricularnr}, function (err) {
         if (err) {
             console.log(err);
@@ -301,3 +302,4 @@ exports.deleteEffort = function(req, res) {
 };
 //TODO: Validate Effort (update/enter) --> Date of effort not more than 2 weeks in past!
 */
+
