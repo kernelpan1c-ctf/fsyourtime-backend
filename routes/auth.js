@@ -8,6 +8,8 @@ var moduledb = require('../models/Module');
 var request = require('request');
 var async = require('async');
 var crypto = require('crypto');
+var logger = require('../lib/logger').getLogger({'module': 'auth'});
+
 
 //TODO: Implement logging and replace "console.log" with logger
 
@@ -32,7 +34,7 @@ exports.login = function (req, res) {
          */
         function(callback) {
             //require('request-debug')(request);
-            console.log("Requesting login from " + user + " - Sync?: " + sync);
+            logger.info("Requesting login from " + user + " - Sync?: " + sync);
             request({
                 'uri':'https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + pass,
                 'timeout':100000,
@@ -41,42 +43,42 @@ exports.login = function (req, res) {
                 }
             } , function(err, response, body) {
                 try {
+
                     var userInfo = JSON.parse(body);
-                    userInfo.sync = sync;
+                    if(userInfo.success) {
+                        userInfo.sync = sync;
+                        userInfo.campusUsername = user;
+                        var userid = new Buffer(userInfo.fullname);
+                        var hashedUserid = crypto.createHash('md5').update(userid).digest('hex').toUpperCase();
+                        userInfo.userid = hashedUserid;
+                        return callback(null, userInfo);
+                    } else {
+                        return callback("E0000", userInfo);
+                    }
+
                 } catch (e) {
                     console.log(e);
                     console.log(body);
                     return callback("E0003");
                 }
-                console.log('Did it work? ' + userInfo.success);
-                if(userInfo.success) {
-                    console.log("User logged in at Efiport");
-                    var userid = new Buffer(userInfo.fullname);
-                    var hashedUserid = crypto.createHash('md5').update(userid).digest('hex').toUpperCase();
-                    userInfo.userid = hashedUserid;
-                    callback(null, user, pass, userInfo);
-                } else {
-                    return callback("E0000", userInfo);
-                }
+                //console.log(userInfo);
             });
         },
-        function(user, pass, userinfo ,callback) {
-            //console.log(userinfo);
+        function(userinfo ,callback) {
             var sessionBuffer = new Buffer(user+pass+userinfo.sessionid);
             var hashedSessionBuffer = crypto.createHash('sha256').update(sessionBuffer).digest('hex').toUpperCase();
-            console.log('New user created. SessionID: ' + hashedSessionBuffer);
             userinfo.mySessionId = hashedSessionBuffer;
             return callback(null, userinfo);
         },
         function(userInfo, callback) {
             if(!userInfo.sync) {
-                console.log("Skipping module request");
+                logger.info("Skipping module request");
                 return callback(null, userInfo, null);
             }
 
-            console.log('Backend Session ID: ' + userInfo.mySessionId);
-            console.log('Efiport Session ID: ' + userInfo.sessionid);
-            console.log('Requesting Student Data...');
+            //console.log('Backend Session ID: ' + userInfo.mySessionId);
+            //console.log('Efiport Session ID: ' + userInfo.sessionid);
+            logger.info('Requesting Student Data for ' + userInfo.userid + "[" + userInfo.campusUsername + "]");
 
 
             var cookie = "JSESSIONID="+userInfo.sessionid + "; SERVERID=fs-bl-02";
@@ -89,17 +91,15 @@ exports.login = function (req, res) {
                 }
             }, function(err, response, body) {
                 if(err) {
-                    console.log("Jesus christ I fucked up what the fuck is going on :O");
+                    logger.error("Jesus christ I fucked up what the fuck is going on :O");
                     return callback("E0002");
                 }
-                console.log('Student data arrived....');
+                logger.info("Student data for " + userInfo.userid + "[" + userInfo.campusUsername + "] arrived");
                 var studentInfo = JSON.parse(body);
                 if(!studentInfo.success) {
                     return callback("E0002", body);
                 }
-                //console.log(studentInfo);
                 userInfo.matricularnr = studentInfo.matrikelnummer;
-                //console.log(userInfo);
                 return callback(null, userInfo, studentInfo);
 
             });
@@ -114,9 +114,10 @@ exports.login = function (req, res) {
                     console.log(err);
                     return callback("Fucked UP!");
                 } else {
-                    console.log(result);
-                    console.log(userInfo.sync);
+                    //console.log(result);
+                    //console.log(userInfo.sync);
                     if(!userInfo.sync) {
+                        logger.info("Created session for user " + userInfo.userid + "in database - " + userInfo.mySessionId)
                         return callback("E0001", userInfo);
                     } else {
                         return callback(null, userInfo, studentInfo);
