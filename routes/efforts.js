@@ -164,7 +164,7 @@ exports.createEffort = function(req, res) {
             console.log('We have an error: ' + err);
             res.status(500).send('I fucked this up :(');
         }
-        console.log(result);
+        console.log(results);
         if(results.length == 3) {
             //result[0] = Module, result[1] = Student, result[2] = EffortType
             var newEffort = new effortdb.effortModel();
