@@ -103,13 +103,18 @@ exports.createEffort = function(req, res) {
     var studId = req.body.studentid;
 	var efftypeId = req.body.efforttypeid;
     var amount = req.body.amount;
+    var performanceDate = req.body.performancedate || Date.now();
 
     if(!modId || !studId || !efftypeId) {
         return res.status(400).send("One of the parameters was undefined");
     }
-    console.log("I'm here");
+
     if(!amount || amount < 1) {
         return res.status(400).send("Amount has to be greater or equal to 1");
+    }
+
+    if(!performanceDate) {
+        return res.status(400).send("Performance Date has to be set");
     }
 
     async.parallel([

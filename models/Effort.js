@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var effortSchema = mongoose.Schema(
 { 	
-	amount: {type: Number, default: null, required: true},
+	amount: {type: Number, default: 0, required: true},
 	module: {type: String, ref: 'Module', required: true},
 	createdBy: {type: String, ref: 'Student', required: true},
     type: {type: Number, ref: 'EffType'},
