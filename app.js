@@ -3,6 +3,7 @@
 var express = require('express');
 var app = express();
 var mongoose = require('mongoose');
+var logger = require('./lib/logger').getLogger({'module': 'server'});
 
 //var path = require('path');
 //var favicon = require('serve-favicon');
@@ -23,7 +24,7 @@ app.use(bodyParser.json());
 app.use(function (req, res, next) {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-  console.log('Connection from ' + ip + ' --> '+ fullUrl + " ["  + req.method + "]");
+  logger.info('Received ' + req.method + ' request from ' + ip + ' to '+ fullUrl);
   next();
 });
 
