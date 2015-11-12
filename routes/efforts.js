@@ -113,27 +113,25 @@ exports.createEffort = function(req, res) {
             console.log(modId + " " + studId + " " + efftypeId);
             moduledb.moduleModel.findById(modId, function(err, result) {
                 if (err) {
-                    callback(err);
-                    return;
+                    return callback(err);
                 }
                 if (result == undefined) {
-                    callback("Module not found");
+                    return callback("Module not found");
                 } else {
-                    callback(null, result);
+                    return callback(null, result);
                 }
             });
         },
         function(callback) {
             studdb.studentModel.findById(studId, function(err, result) {
                 if (err) {
-                    callback(err);
-                    return;
+                    return callback(err);
                 }
-                if (result == undefined) {
-                    callback("Student not found");
-                    return;
+                if (!result) {
+                    return callback("Student not found");
+
                 } else {
-                    callback(null, result);
+                    return callback(null, result);
                 }
             });
 
@@ -141,19 +139,21 @@ exports.createEffort = function(req, res) {
 		function(callback) {
             efforttypedb.effTypeModel.findById(efftypeId, function(err, result) {
                 if (err) {
-                    callback(err);
-                    return;
+                    return callback(err);
                 }
                 if (result == undefined) {
-                    callback("Effort Type not found");
-                    return;
+                    return callback("Effort Type not found");
                 } else {
-                    callback(null, result);
+                    return callback(null, result);
                 }
             });
 
         }
     ], function(err, results) {
+        if(err) {
+            console.log('We have an error: ' + err);
+            res.status(500).send('I fucked this up :(');
+        }
         if(results.length == 3) {
             //result[0] = Module, result[1] = Student, result[2] = EffortType
             var newEffort = new effortdb.effortModel();
