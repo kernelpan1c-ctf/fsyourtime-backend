@@ -102,10 +102,13 @@ exports.createEffort = function(req, res) {
     var modId = req.body.moduleid;
     var studId = req.body.studentid;
 	var efftypeId = req.body.efforttypeid;
+    var amount = req.body.amount;
 
     if(!modId || !studId || !efftypeId) {
         return res.status(400).send("One of the parameters was undefined");
-    } else if(!amount || amount < 1) {
+    }
+    console.log("I'm here");
+    if(!amount || amount < 1) {
         return res.status(400).send("Amount has to be greater or equal to 1");
     }
 
@@ -188,8 +191,6 @@ exports.createEffort = function(req, res) {
             res.status(400).send("User, module or effort type not in database");
         }
     });
-    return;
-    
 };
 
 
