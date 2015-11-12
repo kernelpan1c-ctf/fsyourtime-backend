@@ -104,7 +104,7 @@ exports.createEffort = function(req, res) {
 	var efftypeId = req.body.efforttypeid;
 
     if(!modId || !studId || !efftypeId) {
-        res.status(400).send("One of the parameters was undefined");
+        return res.status(400).send("One of the parameters was undefined");
     }
 
     async.parallel([
@@ -163,10 +163,10 @@ exports.createEffort = function(req, res) {
 			newEffort.type = results[2]["_id"];
 			newEffort.performanceDate = new Date(req.body.performancedate); 
 			// "<YYYY-mm-dd>" Format
-			if(req.body.material !== undefined) {
+			if(req.body.material) {
                 newEffort.material = req.body.material;
             }
-            if(req.body.place !== undefined) {
+            if(req.body.place) {
                 newEffort.place = req.body.place;
             } 
             newEffort.save(function(err, result) {
@@ -183,7 +183,7 @@ exports.createEffort = function(req, res) {
             //console.log(newEffort);
             //res.status(200).send(newEffort);
         } else {
-            res.status(404).send("User, module or effort type not in database");
+            res.status(400).send("User, module or effort type not in database");
         }
     });
     return;
@@ -270,7 +270,7 @@ exports.updateEffort = function(req, res) {
             //console.log(eff);
             //res.status(200).send(eff);
         } else {
-            res.status(404).send("Module or effort not in database");
+            res.status(400).send("Module or effort not in database");
         }
     });
     return;	
