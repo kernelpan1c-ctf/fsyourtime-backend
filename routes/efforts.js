@@ -1,303 +1,255 @@
+var express = require('express');
+var router = express.Router();
+
+
+//Routes
+var students = require('./students.js');
+var modules = require('./modules.js');
+var efforts = require('./efforts.js');
+var efftypes = require('./efftypes.js');
+var sample = require('./sample.js');
+var login = require('./auth.js');
+
+
+/*####### student ########*/
+router.get('/', function(req, res, next) {
+    res.send('you\'ve reached the index');
+    next();
+});
+
+router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
+    res.send('loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e');
+});
 /**
- * Created by Kevin on 10/5/15.
+ * @api {post} /login Login
+ * @apiName Login
+ * @apiGroup 01 General
+ *
+ * @apiParam username FSCampus Username
+ * @apiParam password FSCampus Password
+ * @apiParam syncdata If "true", modules will be fetched from efiport
+ *
+ * @apiParamExample {json} Example
+ *    {
+ *      "username": "user",
+ *      "password": "pass",
+ *      "syncdata": true
+ *    }
+ *
+ * @apiSuccess {String} id SessionID
+ * @apiSuccess {Boolean} success True if login worked
+ * @apiSuccess {Boolean} privacy True if the User has previously accepted privacy statement
+ *
  */
+router.post('/login', login.login);
+/**
+ * @api {post} /logout Logut
+ * @apiName Logout
+ * @apiGroup 01 General
+ *
+ * @apiHeader x-session SessionID
+ *
+ */
+router.post('/logout', login.logout);
+// no Apidoc
+router.get('/api/students/', students.checkStudent);
+// no Apidoc
+router.get('/sample/create', sample.createSampleData);
+/**
+ * @api {get} /api/modules/student/ Get all Modules per Student
+ * @apiName GetModules
+ * @apiGroup 02 Modules
+ *
+ * @apiSuccess {String} id ModuleID
+ * @apiSuccess {String} name Module Name
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ */
+router.get('/api/modules/student/', modules.getModulesByStudent);
+/**
+ * @api {get} /api/efforts/student/:matricularnr Get efforts by student
+ * @apiName Get Efforts (Array) By Student
+ * @apiGroup 03 Efforts
+ *
+ * @apiSuccess {String} _id ID of effort
+ * @apiSuccess {Integer} amount Booked time in Minutes
+ * @apiSuccess {String} module Module for the effort
+ * @apiSuccess {String} createdBy Creator of the effort (Matricularnr)
+ * @apiSuccess {String} type ID of Type of the effort
+ * @apiSuccess {String} bookingDate Date on which the effort was booked
+ * @apiSuccess {String} performanceDate Date on which the effort was done
+ * @apiSuccess {String} [place] Place of the effort, empty if not set
+ * @apiSuccess {String} [material] Material of the effort, empty if not set
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {String} matricularnr Creator of the effort (Matricularnr)
+ *
+ *
+ *
+ */
+router.get('/api/efforts/student/:matricularnr', efforts.getEffortsByStudent);
+/**
+ * @api {get} /api/efforts/:effortid Get effort by ID
+ * @apiName Get Effort By ID
+ * @apiGroup 03 Efforts
+ *
+ * @apiSuccess {String} _id ID of effort
+ * @apiSuccess {Integer} amount Booked time in Minutes
+ * @apiSuccess {String} module Module for the effort
+ * @apiSuccess {String} createdBy Creator of the effort (Matricularnr)
+ * @apiSuccess {String} type ID of Type of the effort
+ * @apiSuccess {String} bookingDate Date on which the effort was booked
+ * @apiSuccess {String} performanceDate Date on which the effort was done
+ * @apiSuccess {String} [place] Place of the effort, empty if not set
+ * @apiSuccess {String} [material] Material of the effort, empty if not set
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {String} effortid ID of effort
+ *
+ *
+ *
+ */
+router.get('/api/efforts/:effortid', efforts.getEffortById);
+/**
+ * @api {get} /api/efforts/module/:moduleid/:matricularnr Get efforts by module and student
+ * @apiName Get Efforts (Array) By Module
+ * @apiGroup 03 Efforts
+ *
+ * @apiSuccess {String} _id ID of effort
+ * @apiSuccess {Integer} amount Booked time in Minutes
+ * @apiSuccess {String} module Module for the effort
+ * @apiSuccess {String} createdBy Creator of the effort (Matricularnr)
+ * @apiSuccess {String} type ID of Type of the effort
+ * @apiSuccess {String} bookingDate Date on which the effort was booked
+ * @apiSuccess {String} performanceDate Date on which the effort was done
+ * @apiSuccess {String} [place] Place of the effort, empty if not set
+ * @apiSuccess {String} [material] Material of the effort, empty if not set
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {String} moduleid Module of the effort
+ * @apiParam {String} matricularnr Creator of the effort (Matricularnr)
+ *
+ *
+ *
+ */
+router.get('/api/efforts/module/:moduleid/:matricularnr', efforts.getEffortsByModule);
+//router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
+//router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
+//router.get('/api/efforttypes', efftypes.getAllTypes);
 
-var effortdb = require('../models/Effort.js');
-var studdb = require('../models/Student.js');
-var identdb = require('../models/Identification.js');
-var moduledb = require('../models/Module.js');
-var efforttypedb = require('../models/EffType.js');
-var async = require('async');
+/**
+ * @api {post} /api/efforts Save new effort
+ * @apiName Create Effort
+ * @apiGroup 03 Efforts
+ *
+ * @apiSuccess {Boolean} success true, if module was saved
+ * @apiSuccess {String} id ID of effort
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {Integer} amount Booked time in Minutes, in Body
+ * @apiParam {String} moduleid Module for the effort, in Body
+ * @apiParam {String} studentid Creator of the effort, in Body
+ * @apiParam {String} efftypeid Type of the effort, in Body
+ * @apiParam {String} performancedate Date on which the effort was done (YYY-MM-DD), in Body
+ * @apiParam {String} [place] Place of the effort, empty if not set, in Body
+ * @apiParam {String} [material] Material of the effort, empty if not set, in Body
+ *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *      "amount":"20",
+ *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
+ *      "studentid":"1234567",
+ *      "efforttypeid":"56257c4c1f7b6687091d2c06",
+ *      "performanceDate":"2014-10-05",
+ *      "place":"Bibliothek",
+ *      "material":"Buch"
+ *  }
+ *
+ */
+router.post('/api/efforts', efforts.createEffort);
+/**
+ * @api {put} /api/updateEffort/:effortid Update existing effort
+ * @apiName Update Effort
+ * @apiGroup 03 Efforts
+ *
+ * @apiSuccess {Boolean} success true, if module was saved
+ * @apiSuccess {String} id ID of effort
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {Integer} amount Booked time in Minutes, in Body
+ * @apiParam {String} moduleid Module for the effort, in Body
+ * @apiParam {String} studentid Creator of the effort, in Body
+ * @apiParam {String} efftypeid Type of the effort, in Body
+ * @apiParam {String} performancedate Date on which the effort was done (YYY-MM-DD), in Body
+ * @apiParam {String} [place] Place of the effort, empty if not set, in Body
+ * @apiParam {String} [material] Material of the effort, empty if not set, in Body
+ *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *      "amount":"20",
+ *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
+ *      "studentid":"1234567",
+ *      "efforttypeid":"56257c4c1f7b6687091d2c06",
+ *      "performanceDate":"2014-10-05"
+ *  }
+ *
+ */
+router.put('/api/updateEffort/:effortid', efforts.updateEffort);
+/**
+ * @api {put} /api/updateStudent/:studentid Update existing student (privacy)
+ * @apiName Update Student
+ * @apiGroup 04 Students
+ *
+ * @apiSuccess {Boolean} success true, if student was updated
+ * @apiSuccess {String} id ID of student
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {Integer} studentid ID of Student (not Matricular-#!)
+ * @apiParam {Boolean} privacyflag True or False, in Body 
+ *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *      "privacyflag":true
+ *  }
+ *
+ */
+router.put('/api/updateStudent/:studentid', students.updateStudent);
 
-exports.getEffortsByStudent = function (req, res) {
-    // Student can view a list of his efforts
-    // Result contains all information about the efforts, however, not all must be used
-    var studentId = req.params.studentid;
-    async.series([
-        function(callback) {
-            console.log("Checking for student: " + studentId);
-            studdb.studentModel.count({ _id: studentId }, function(err, count) {
-                //console.log("Found: " + count);
-                if(count > 0) {
-                    console.log("Student found. Searching database for efforts.");
-                    callback()
-                } else {
-                    callback("Student not in Database!");
-                }
-            });
-        },
-        function(callback) {
-            effortdb.effortModel.find( { createdBy: studentId }, function(err, result) {
-                if(err) console.log(err);
-                else callback(result);
-            });
-        }
-    ], function (err, result) {
-        console.log("Done. Sending results.");
-        if(err) res.status(500).send(err);
-        else if(result) res.status(200).send(result);
-    });
-};
+/**
+ * @api {delete} /api/deleteEffort/:effortid Delete existing effort
+ * @apiName Delete Effort
+ * @apiGroup 03 Efforts
+ *
+ * @apiSuccess {String} success true, if module was saved
+ * @apiSuccess {String} id ID if effort
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {String} effortid ID of effort which should be deleted
+ * @apiParam {Integer} matricularnr Matricularnr of creator of effort, in Body
+ *
+ * @apiParamExample {json} Request-Example:
+ *  {
+ *      "studentid":"7675804"
+ *  }
+ *
+ */
+router.delete('/api/deleteEffort/:effortid', efforts.deleteEffort);
+//router.delete('/api/eff', efforts.deleteAllMyEfforts);
 
-exports.getEffortById = function (req, res) {
-    // Get an Effort by ID
-    var effortid = req.params.effortid;
-    effortdb.effortModel.findById(effortid, function (err, effort) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.status(200).send(effort);
-        }
-    });
-};
-
-exports.getEffortsByModule = function (req, res) {
-    // Student can view a list of his efforts for one selected module
-    // Result contains all information about the efforts, however, not all must be used
-	var moduleId = req.params.moduleid;
-	var studentId = req.params.studentid;
-    async.series([
-        function(callback) {
-            console.log("Checking for student: " + studentId);
-            studdb.studentModel.count({ _id: studentId }, function(err, count) {
-                //console.log("Found: " + count);
-                if(count > 0) {
-                    console.log("Student found. Searching database for module.");
-                    callback()
-                } else {
-                    callback("Student not in Database!");
-                }
-            });
-        },
-		function(callback) {
-            console.log("Checking for module: " + moduleId);
-            moduledb.moduleModel.count({ _id: moduleId }, function(err, count) {
-                //console.log("Found: " + count);
-                if(count > 0) {
-                    console.log("Module found. Searching database for efforts.");
-                    callback()
-                } else {
-                    callback("Module not in Database!");
-                }
-            });
-        },
-        function(callback) {
-            effortdb.effortModel.find( { createdBy: studentId, module: moduleId }, function(err, result) {
-                if(err) console.log(err);
-                else callback(result);
-            });
-        }
-    ], function (err, result) {
-        console.log("Done. Sending results.");
-        if(err) res.status(500).send(err);
-        else if(result) res.status(200).send(result);
-    });
-};
-  
-  
-
-exports.createEffort = function(req, res) {
-    //console.log(req.body);
-    var modId = req.body.moduleid;
-    var studId = req.body.studentid;
-	var efftypeId = req.body.efforttypeid;
-
-    async.parallel([
-        function(callback) {
-
-            console.log(modId + " " + studId + " " + efftypeId);
-            moduledb.moduleModel.findById(modId, function(err, result) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                if (result == undefined) {
-                    callback("Module not found");
-                } else {
-                    callback(null, result);
-                }
-            });
-        },
-        function(callback) {
-            studdb.studentModel.findById(studId, function(err, result) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                if (result == undefined) {
-                    callback("Student not found");
-                    return;
-                } else {
-                    callback(null, result);
-                }
-            });
-
-        },
-		function(callback) {
-            efforttypedb.effTypeModel.findById(efftypeId, function(err, result) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                if (result == undefined) {
-                    callback("Effort Type not found");
-                    return;
-                } else {
-                    callback(null, result);
-                }
-            });
-
-        }
-    ], function(err, results) {
-        if(results.length == 3) {
-            //result[0] = Module, result[1] = Student, result[2] = EffortType
-            var newEffort = new effortdb.effortModel();
-            newEffort.amount = req.body.amount;
-            newEffort.module = results[0]["_id"];
-            newEffort.createdBy = results[1]["_id"];
-			newEffort.type = results[2]["_id"];
-			newEffort.performanceDate = new Date(req.body.performancedate); 
-			// "<YYYY-mm-dd>" Format
-			if(req.body.material !== undefined) {
-                newEffort.material = req.body.material;
-            }
-            if(req.body.place !== undefined) {
-                newEffort.place = req.body.place;
-            } 
-            newEffort.save(function(err, result) {
-                if(err) {
-					console.log(err);
-					res.status(500).send("Failed to create effort");}
-                else if(result) {
-                    var message = {};
-                    message.success = true;
-                    message.id = result._id;
-                    res.status(201).send(message);
-                }
-            })
-            //console.log(newEffort);
-            //res.status(200).send(newEffort);
-        } else {
-            res.status(404).send("User, module or effort type not in database");
-        }
-    });
-    return;
-    
-};
-
-
-exports.updateEffort = function(req, res) {
-    //console.log(req.body);
-    var modId = req.body.moduleid;
-    var effId = req.params.effortid;
-	var efftypeId = req.body.efforttypeid;
-	var studId = req.body.studentid;
-
-    async.parallel([
-        function(callback) {
-
-            console.log(modId + " " + effId + " " + efftypeId);
-            moduledb.moduleModel.findById(modId, function(err, result) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                if (result == undefined) {
-                    callback("Module not found");
-                } else {
-                    callback(null, result);
-                }
-            });
-        },
-		function(callback) {
-            efforttypedb.effTypeModel.findById(efftypeId, function(err, result) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                if (result == undefined) {
-                    callback("Effort Type not found");
-                    return;
-                } else {
-                    callback(null, result);
-                }
-            });
-
-        }
-    ], function(err, results) {
-        if(results.length == 2) {
-            //result[0] = Module, result[1] = EffortType
-			
-			effortdb.effortModel.findById(effId, function(err, eff) {
-  
-			if (err){
-                res.send(err);
-                return;
-			}
-			if (eff.createdBy !== studId){
-				res.status(403).send("This is not your effort. Get lost.");
-				return;
-			}
-			else {
-            eff.module = results[0]["_id"];
-            eff.type = results[1]["_id"];
-			eff.amount = req.body.amount;
-			eff.performanceDate = new Date(req.body.performanceDate); 
-			// "<YYYY-mm-dd>" Format
-			if(req.body.material !== undefined) {
-                eff.material = req.body.material;
-            }
-            if(req.body.place !== undefined) {
-                eff.place = req.body.place;
-            } 
-            // save the effort
-            eff.save(function(err, result) {
-                if(err) res.status(500).send("Failed to update effort");
-                else if(result) {
-                    var message = {};
-                    message.success = true;
-                    message.id = result._id;
-                    res.status(200).send(message);
-                }
-            })
-			}
-			});
-            //console.log(eff);
-            //res.status(200).send(eff);
-        } else {
-            res.status(404).send("Module or effort not in database");
-        }
-    });
-    return;	
-	
-   
-};
-
-
-exports.deleteEffort = function(req, res) {
-	var effId = req.params.effortid;
-	var studId = req.body.studentid;
-	console.log(effId + "  " + studId);
-            // delete the effort
-            effortdb.effortModel.remove({_id: effId, createdBy: studId}, function(err, eff) {
-            if (err)
-                res.send(err);
-            res.status(200).send("Successfully deleted!");;
-			});	
-};
-
-
-/*exports.deleteAllMyEfforts = function(req, res) {
-    effortdb.remove({matricularnr: req.params.matricularnr}, function (err) {
-        if (err) {
-            console.log(err);
-            return res.sendStatus(500);
-        }
-        else { return res.sendStatus(200)}
-    });
-
-
-};
-//TODO: Validate Effort (update/enter) --> Date of effort not more than 2 weeks in past!
-*/
+module.exports = router;
