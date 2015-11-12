@@ -12,7 +12,7 @@ var async = require('async');
 exports.getEffortsByStudent = function (req, res) {
     // Student can view a list of his efforts
     // Result contains all information about the efforts, however, not all must be used
-    var studentId = req.params.studentid;
+    var studentId = req.params.matricularnr;
     async.series([
         function(callback) {
             console.log("Checking for student: " + studentId);
@@ -56,7 +56,7 @@ exports.getEffortsByModule = function (req, res) {
     // Student can view a list of his efforts for one selected module
     // Result contains all information about the efforts, however, not all must be used
 	var moduleId = req.params.moduleid;
-	var studentId = req.params.studentid;
+	var studentId = req.params.matricularnr;
     async.series([
         function(callback) {
             console.log("Checking for student: " + studentId);
@@ -277,7 +277,7 @@ exports.updateEffort = function(req, res) {
 
 exports.deleteEffort = function(req, res) {
 	var effId = req.params.effortid;
-	var studId = req.body.studentid;
+	var matricularnr = req.body.matricularnr;
 	console.log(effId + "  " + studId);
             // delete the effort
             effortdb.effortModel.remove({_id: effId, createdBy: studId}, function(err, eff) {
@@ -299,5 +299,3 @@ exports.deleteEffort = function(req, res) {
 
 
 };
-//TODO: Validate Effort (update/enter) --> Date of effort not more than 2 weeks in past!
-*/
