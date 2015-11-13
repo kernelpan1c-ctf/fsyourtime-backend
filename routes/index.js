@@ -111,7 +111,7 @@ router.get('/api/efforts/student/', efforts.getEffortsByStudent);
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  */
-router.get('/api/efforts/', efforts.getEffortById);
+router.get('/api/efforts/:effortid', efforts.getEffortById);
 /**
  * @api {get} /api/efforts/module/:moduleid/ Get efforts by module and student
  * @apiName Get Efforts (Array) By Module
