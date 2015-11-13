@@ -288,3 +288,15 @@ exports.deleteEffort = function(req, res) {
     });
 };
 
+exports.deleteAllEfforts = function(req, res) {
+    var studentId = req.headers['x-key'];
+
+    effortdb.effortModel.remove({'createdBy': studentId}, function(err, result) {
+        if(err) {
+            res.status(500).send("Failed to send modules");
+        } else if (result) {
+            res.status.send({success: true, deleted:result.length});
+        }
+    });
+}
+

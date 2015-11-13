@@ -199,15 +199,14 @@ router.post('/api/efforts', efforts.createEffort);
  *  {
  *      "amount":"20",
  *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
- *      "studentid":"1234567",
  *      "efforttypeid":"56257c4c1f7b6687091d2c06",
  *      "performanceDate":"2014-10-05"
  *  }
  *
  */
-router.put('/api/updateEffort/:effortid', efforts.updateEffort);
+router.put('/api/efforts/:effortid', efforts.updateEffort);
 /**
- * @api {put} /api/updateStudent/:studentid Update existing student (privacy)
+ * @api {put} /api/students/:studentid Update existing student (privacy)
  * @apiName Update Student
  * @apiGroup 04 Students
  *
@@ -226,19 +225,34 @@ router.put('/api/updateEffort/:effortid', efforts.updateEffort);
  *  }
  *
  */
-router.put('/api/updateStudent/:studentid', students.updateStudent);
+router.put('/api/students/:studentid', students.updateStudent);
 /**
- * @api {delete} /api/deleteEffort/:effortid Delete existing effort
+ * @api {delete} /api/efforts/:effortid Delete existing effort
  * @apiName Delete Effort
  * @apiGroup 03 Efforts
  *
- * @apiSuccess {String} success true, if module was saved
- * @apiSuccess {String} id ID if effort
+ * @apiSuccess {Boolean} success True if module was saved
+ * @apiSuccess {String} id ID if Effort was deleted
  *
  * @apiHeader x-session Session ID
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  */
-router.delete('/api/deleteEffort/:effortid', efforts.deleteEffort);
+router.delete('/api/efforts/:effortid', efforts.deleteEffort);
+
+/**
+ * @api {delete} /api/efforts
+ * @apiName Delete all efforts
+ * @apiGroup 03 Efforts
+ *
+ * @apiSuccess {Boolean} success True if all modules were deleted
+ * @apiSuccess {Number} count Number of deleted efforts
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ *
+ */
+router.delete('/api/efforts', efforts.deleteAllEfforts);
 
 module.exports = router;
