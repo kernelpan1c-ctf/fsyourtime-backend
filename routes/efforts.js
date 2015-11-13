@@ -295,7 +295,7 @@ exports.deleteAllEfforts = function(req, res) {
         if(err) {
             res.status(500).send("Failed to send modules");
         } else if (result) {
-            res.status.send({success: true, deleted:result.length});
+            res.status(200).send({success: true, deleted:result.length});
         }
     });
 }
