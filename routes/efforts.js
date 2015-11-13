@@ -285,7 +285,7 @@ exports.updateEffort = function(req, res) {
 
 exports.deleteEffort = function(req, res) {
 	var effId = req.params.effortid;
-	console.log(effId + "  " + studId);
+	console.log(effId);
             // delete the effort
     effortdb.effortModel.findByIdAndRemove(effId, function(err, eff) {
         if (err) {

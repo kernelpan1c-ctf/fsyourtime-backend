@@ -230,14 +230,6 @@ router.put('/api/updateStudent/:studentid', students.updateStudent);
  * @apiHeader x-session Session ID
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
- * @apiParam {String} effortid ID of effort which should be deleted
- * @apiParam {Integer} matricularnr Matricularnr of creator of effort, in Body
- *
- * @apiParamExample {json} Request-Example:
- *  {
- *      "studentid":"7675804"
- *  }
- *
  */
 router.delete('/api/deleteEffort/:effortid', efforts.deleteEffort);
 //router.delete('/api/eff', efforts.deleteAllMyEfforts);
