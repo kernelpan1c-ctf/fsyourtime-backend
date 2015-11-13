@@ -176,7 +176,7 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  */
 router.post('/api/efforts/', efforts.createEffort);
 /**
- * @api {put} /api/updateEffort/:effortid Update existing effort
+ * @api {put} /api/efforts/:effortid Update existing effort
  * @apiName Update Effort
  * @apiGroup 03 Efforts
  *
