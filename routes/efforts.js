@@ -91,7 +91,7 @@ exports.getEffortsByModule = function (req, res) {
     ], function (err, result) {
         console.log("Done. Sending results.");
         if(err) res.status(500).send(err);
-        else if(result) res.status(200).send(result[1]);
+        else if(result) res.status(200).send(result[2]);
     });
 };
   
@@ -202,7 +202,7 @@ exports.updateEffort = function(req, res) {
     var modId = req.body.moduleid;
     var effId = req.params.effortid;
 	var efftypeId = req.body.efforttypeid;
-	var studId = req.body.studentid;
+	var studId = req.headers['x-key'];
 
     async.parallel([
         function(callback) {
