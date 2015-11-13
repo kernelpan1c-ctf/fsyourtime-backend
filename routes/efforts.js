@@ -227,9 +227,8 @@ exports.updateEffort = function(req, res) {
         //if (!updated.length) res.status(500).send("No variables found to update");
         effortdb.effortModel.findOneAndUpdate({'_id': effId}, updated, function (err, result) {
             if (err) res.status(500).send("Somthing went wrong");
-            else if (result) res.status(200).send(result);
+            else if (result) res.status(200).send({'success': true});
         });
-
     });
 };
 
