@@ -221,6 +221,7 @@ exports.updateEffort = function(req, res) {
         var updated = {};
         if (amount) updated.amount = amount;
         if (efftypeId) updated.type = efftypeId;
+        console.log(updated);
         //if (!updated.length) res.status(500).send("No variables found to update");
         effortdb.effortModel.findOneAndUpdate({'_id': effId}, updated, function (err, result) {
             if (err) res.status(500).send("Somthing went wrong");
