@@ -219,7 +219,7 @@ exports.updateEffort = function(req, res) {
     ], function(err, results) {
         if (err) return res.send(500).send("I fucked this up :(");
         var updated = {};
-        if (amount) updated.amount = amount;
+        if (amount > 0) updated.amount = amount;
         if (efftypeId) updated.type = efftypeId;
         console.log(updated);
         //if (!updated.length) res.status(500).send("No variables found to update");
