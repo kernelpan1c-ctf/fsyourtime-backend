@@ -45,8 +45,7 @@ exports.getEffortById = function (req, res) {
     effortdb.effortModel.findById(effortid, function (err, effort) {
         if (err) {
             console.log(err);
-        }
-        else {
+        } else {
             res.status(200).send(effort);
         }
     });
@@ -283,7 +282,6 @@ exports.updateEffort = function(req, res) {
 	
    
 };
-
 
 exports.deleteEffort = function(req, res) {
 	var effId = req.params.effortid;
