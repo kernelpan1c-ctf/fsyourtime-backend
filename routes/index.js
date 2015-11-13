@@ -117,7 +117,7 @@ router.get('/api/efforts/student/', efforts.getEffortsByStudent);
  */
 router.get('/api/efforts/', efforts.getEffortById);
 /**
- * @api {get} /api/efforts/module/:moduleid/:matricularnr Get efforts by module and student
+ * @api {get} /api/efforts/module/:moduleid/ Get efforts by module and student
  * @apiName Get Efforts (Array) By Module
  * @apiGroup 03 Efforts
  *
@@ -134,13 +134,8 @@ router.get('/api/efforts/', efforts.getEffortById);
  * @apiHeader x-session Session ID
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
- * @apiParam {String} moduleid Module of the effort
- * @apiParam {String} matricularnr Creator of the effort (Matricularnr)
- *
- *
- *
  */
-router.get('/api/efforts/module/:moduleid/:matricularnr', efforts.getEffortsByModule);
+router.get('/api/efforts/module/:moduleid/', efforts.getEffortsByModule);
 //router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 //router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
 //router.get('/api/efforttypes', efftypes.getAllTypes);

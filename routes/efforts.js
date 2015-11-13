@@ -56,7 +56,7 @@ exports.getEffortsByModule = function (req, res) {
     // Student can view a list of his efforts for one selected module
     // Result contains all information about the efforts, however, not all must be used
 	var moduleId = req.params.moduleid;
-	var studentId = req.params.studentid;
+	var studentId = req.headers['x-key'];
     async.series([
         function(callback) {
             console.log("Checking for student: " + studentId);
@@ -85,13 +85,13 @@ exports.getEffortsByModule = function (req, res) {
         function(callback) {
             effortdb.effortModel.find( { createdBy: studentId, module: moduleId }, function(err, result) {
                 if(err) console.log(err);
-                else callback(null, result[1]);
+                else callback(null, result);
             });
         }
     ], function (err, result) {
         console.log("Done. Sending results.");
         if(err) res.status(500).send(err);
-        else if(result) res.status(200).send(result);
+        else if(result) res.status(200).send(result[1]);
     });
 };
   
