@@ -217,17 +217,16 @@ exports.updateEffort = function(req, res) {
 
         }
     ], function(err, results) {
-        if (err) res.send(500).send("I fucked this up :(");
-        if(results.length == 2) {
-            var updated = {};
-            if (amount) updated.amount = amount;
-            if (efftypeId) updated.type = efftypeId;
-            if (!updated.length) res.status(500).send("No variables found to update");
-            effortdb.effortModel.findOneAndUpdate({'_id': effId}, updated, function (err, result) {
-                if (err) res.status(500).send("Somthing went wrong");
-                else if (result) res.status(200).send(result);
-            });
-        }
+        if (err) return res.send(500).send("I fucked this up :(");
+        var updated = {};
+        if (amount) updated.amount = amount;
+        if (efftypeId) updated.type = efftypeId;
+        if (!updated.length) res.status(500).send("No variables found to update");
+        effortdb.effortModel.findOneAndUpdate({'_id': effId}, updated, function (err, result) {
+            if (err) res.status(500).send("Somthing went wrong");
+            else if (result) res.status(200).send(result);
+        });
+
     });
 };
 
