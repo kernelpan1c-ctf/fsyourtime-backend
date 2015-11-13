@@ -285,15 +285,16 @@ exports.updateEffort = function(req, res) {
 
 exports.deleteEffort = function(req, res) {
 	var effId = req.params.effortid;
-	var studId = req.body.studentid;
 	console.log(effId + "  " + studId);
             // delete the effort
-            effortdb.effortModel.remove({_id: effId, createdBy: studId}, function(err, eff) {
-            if (err)
-                res.send(err);
-            res.status(200).send("Successfully deleted!");;
-			});	
-};
+    effortdb.effortModel.findByIdAndRemove(effId, function(err, eff) {
+        if (err) {
+            res.status(500).send("Something went wrong");
+        } else if (eff) {
+            res.status(200).send("Successfully deleted!");
+        }
+    });
+}
 
 
 /**
