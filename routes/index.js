@@ -231,7 +231,7 @@ router.put('/api/students/:studentid', students.updateStudent);
  * @apiName Delete Effort
  * @apiGroup 03 Efforts
  *
- * @apiSuccess {Boolean} success True if module was saved
+ * @apiSuccess {Boolean} success True if module was deleted
  * @apiSuccess {String} id ID if Effort was deleted
  *
  * @apiHeader x-session Session ID
@@ -241,7 +241,7 @@ router.put('/api/students/:studentid', students.updateStudent);
 router.delete('/api/efforts/:effortid', efforts.deleteEffort);
 
 /**
- * @api {delete} /api/efforts
+ * @api {delete} /api/efforts Delete all efforts
  * @apiName Delete all efforts
  * @apiGroup 03 Efforts
  *
@@ -250,7 +250,6 @@ router.delete('/api/efforts/:effortid', efforts.deleteEffort);
  *
  * @apiHeader x-session Session ID
  * @apiHeader x-key User ID (NOT Matricular-#!)
- *
  *
  */
 router.delete('/api/efforts', efforts.deleteAllEfforts);
