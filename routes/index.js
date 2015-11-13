@@ -158,7 +158,6 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  *
  * @apiParam {Integer} amount Booked time in Minutes, in Body
  * @apiParam {String} moduleid Module for the effort, in Body
- * @apiParam {String} studentid Creator of the effort, in Body
  * @apiParam {String} efforttypeid Type of the effort, in Body
  * @apiParam {String} performancedate Date on which the effort was done (YYY-MM-DD), in Body
  * @apiParam {String} [place] Place of the effort, empty if not set, in Body
@@ -168,7 +167,6 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  *  {
  *      "amount":"20",
  *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
- *      "studentid":"1234567",
  *      "efforttypeid":"56257c4c1f7b6687091d2c06",
  *      "performanceDate":"2014-10-05",
  *      "place":"Bibliothek",
@@ -176,7 +174,7 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  *  }
  *
  */
-router.post('/api/efforts', efforts.createEffort);
+router.post('/api/efforts/', efforts.createEffort);
 /**
  * @api {put} /api/updateEffort/:effortid Update existing effort
  * @apiName Update Effort
@@ -189,16 +187,11 @@ router.post('/api/efforts', efforts.createEffort);
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  * @apiParam {Integer} amount Booked time in Minutes, in Body
- * @apiParam {String} moduleid Module for the effort, in Body
  * @apiParam {String} efforttypeid Type of the effort, in Body
- * @apiParam {String} performancedate Date on which the effort was done (YYY-MM-DD), in Body
- * @apiParam {String} [place] Place of the effort, empty if not set, in Body
- * @apiParam {String} [material] Material of the effort, empty if not set, in Body
  *
  * @apiParamExample {json} Request-Example:
  *  {
  *      "amount":"20",
- *      "moduleid":"b7423cd5bee2b26c685d84d1ef5868174dfdefb2",
  *      "efforttypeid":"56257c4c1f7b6687091d2c06",
  *      "performanceDate":"2014-10-05"
  *  }
