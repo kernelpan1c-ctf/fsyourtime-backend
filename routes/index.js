@@ -134,7 +134,16 @@ router.get('/api/efforts/:effortid', efforts.getEffortById);
 router.get('/api/efforts/module/:moduleid/', efforts.getEffortsByModule);
 //router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
 //router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
-//router.get('/api/efforttypes', efftypes.getAllTypes);
+/**
+ * @api {get} /api/efforttypes Get all Effort types
+ * @apiName Get Effort Types
+ * @apiGroup 03 Efforts
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ */
+router.get('/api/efforttypes', efftypes.getAllTypes);
 
 /**
  * @api {post} /api/efforts Save new effort

@@ -44,19 +44,12 @@ exports.getTypeByName = function (req, res) {
 
 exports.getAllTypes = function (req, res) {
     // Get all EffTypes
-    efftypedb.effTypeModel
-        .find({})
-        .populate({
-            path: 'relcategory'
+    efftypedb.effTypeModel.find({}, function(err, result) {
+        if(err) {
+            res.status(500).send("Something went wrong");
+        } else if (result) {
+            res.status(200).send(result);
         }
-    )
-        .exec(function (err, efftypes) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                res.json(efftypes);
-            }
-        });
+    });
 };
 
