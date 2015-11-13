@@ -219,6 +219,23 @@ exports.updateStudent = function (req, res) {
 	return;
 };
 
+exports.deleteStudent = function(req, res) {
+    var student = req.headers['x-key'];
+
+    studdb.studentModel.findByIdAndRemove(student, function(err, student) {
+        if (err) res.status(500).send("Failed to delete Student.");
+        else if (student) {
+            var result = {};
+            result.success = true ;
+            result.id = student._id;
+            console.log(result);
+            res.status(200).send(result);
+        } else {
+            res.send({error: "Student not found"});
+        }
+    });
+}
+
 exports.getMyInfo = function(req,res){
     // Student can view his own, full information
     // Course and Modules are displayed by name, not by ID (easy to read)

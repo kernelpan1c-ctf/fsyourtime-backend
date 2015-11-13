@@ -86,10 +86,6 @@ router.get('/api/modules/student/', modules.getModulesByStudent);
  * @apiHeader x-session Session ID
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
- * @apiParam {String} matricularnr Creator of the effort (Matricularnr)
- *
- *
- *
  */
 router.get('/api/efforts/student/', efforts.getEffortsByStudent);
 /**
@@ -132,8 +128,7 @@ router.get('/api/efforts/:effortid', efforts.getEffortById);
  *
  */
 router.get('/api/efforts/module/:moduleid/', efforts.getEffortsByModule);
-//router.get('/api/efforttypes/:efftypeid', efftypes.getTypeById);
-//router.get('/api/efforttypes/:efftypename', efftypes.getTypeByName);
+
 /**
  * @api {get} /api/efforttypes Get all Effort types
  * @apiName Get Effort Types
@@ -174,6 +169,7 @@ router.get('/api/efforttypes', efftypes.getAllTypes);
  *  }
  *
  */
+
 router.post('/api/efforts/', efforts.createEffort);
 /**
  * @api {put} /api/efforts/:effortid Update existing effort
@@ -197,6 +193,7 @@ router.post('/api/efforts/', efforts.createEffort);
  *  }
  *
  */
+
 router.put('/api/efforts/:effortid', efforts.updateEffort);
 /**
  * @api {put} /api/students/:studentid Update existing student (privacy)
@@ -231,6 +228,7 @@ router.put('/api/students/:studentid', students.updateStudent);
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  */
+
 router.delete('/api/efforts/:effortid', efforts.deleteEffort);
 
 /**
@@ -239,12 +237,25 @@ router.delete('/api/efforts/:effortid', efforts.deleteEffort);
  * @apiGroup 03 Efforts
  *
  * @apiSuccess {Boolean} success True if all modules were deleted
- * @apiSuccess {Number} count Number of deleted efforts
  *
  * @apiHeader x-session Session ID
  * @apiHeader x-key User ID (NOT Matricular-#!)
  *
  */
 router.delete('/api/efforts', efforts.deleteAllEfforts);
+
+/**
+ * @api {delete} /api/students/ Delete Student
+ * @apiName Delete Student
+ * @apiGroup 04 Students
+ *
+ * @apiSuccess {Boolean} success True if successfully deleted
+ * @apiSuccess {String} ID ID of deleted Student
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ */
+router.delete('/api/students', students.deleteStudent);
 
 module.exports = router;
