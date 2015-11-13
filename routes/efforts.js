@@ -236,51 +236,40 @@ exports.updateEffort = function(req, res) {
         }
     ], function(err, results) {
         if(results.length == 2) {
-            //result[0] = Module, result[1] = EffortType
-			
 			effortdb.effortModel.findById(effId, function(err, eff) {
-  
-			if (err){
-                res.send(err);
-                return;
-			}
-			if (eff.createdBy !== studId){
-				res.status(403).send("This is not your effort. Get lost.");
-				return;
-			}
-			else {
-            eff.module = results[0]["_id"];
-            eff.type = results[1]["_id"];
-			eff.amount = req.body.amount;
-			eff.performanceDate = new Date(req.body.performanceDate); 
-			// "<YYYY-mm-dd>" Format
-			if(req.body.material !== undefined) {
-                eff.material = req.body.material;
-            }
-            if(req.body.place !== undefined) {
-                eff.place = req.body.place;
-            } 
-            // save the effort
-            eff.save(function(err, result) {
-                if(err) res.status(500).send("Failed to update effort");
-                else if(result) {
-                    var message = {};
-                    message.success = true;
-                    message.id = result._id;
-                    res.status(200).send(message);
+                if (err){
+                    return res.send(err);
                 }
-            })
-			}
+                if (eff.createdBy !== studId) {
+                    return res.status(403).send("This is not your effort. Get lost.");
+                } else {
+                    eff.module = results[0]["_id"];
+                    eff.type = results[1]["_id"];
+                    eff.amount = req.body.amount;
+                    eff.performanceDate = new Date(req.body.performanceDate);
+                    // "<YYYY-mm-dd>" Format
+                    if(req.body.material !== undefined) {
+                        eff.material = req.body.material;
+                    }
+                    if(req.body.place !== undefined) {
+                        eff.place = req.body.place;
+                    }
+                    // save the effort
+                    eff.save(function(err, result) {
+                        if(err) res.status(500).send("Failed to update effort");
+                        else if(result) {
+                            var message = {};
+                            message.success = true;
+                            message.id = result._id;
+                            res.status(200).send(message);
+                        }
+                    });
+                }
 			});
-            //console.log(eff);
-            //res.status(200).send(eff);
         } else {
             res.status(400).send("Module or effort not in database");
         }
     });
-    return;	
-	
-   
 };
 
 exports.deleteEffort = function(req, res) {
@@ -291,24 +280,11 @@ exports.deleteEffort = function(req, res) {
         if (err) {
             res.status(500).send("Something went wrong");
         } else if (eff) {
-            res.status(200).send("Successfully deleted!");
+            var result = {};
+            result.id = eff._id;
+            result.success = true;
+            res.status(200).send(result);
         }
     });
-}
-
-
-/**
-exports.deleteAllMyEfforts = function(req, res) {
-    effortdb.remove({matricularnr: req.params.matricularnr}, function (err) {
-        if (err) {
-            console.log(err);
-            return res.sendStatus(500);
-        }
-        else { return res.sendStatus(200)}
-    });
-
-
 };
-//TODO: Validate Effort (update/enter) --> Date of effort not more than 2 weeks in past!
-*/
 

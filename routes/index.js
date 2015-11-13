@@ -218,7 +218,6 @@ router.put('/api/updateEffort/:effortid', efforts.updateEffort);
  *
  */
 router.put('/api/updateStudent/:studentid', students.updateStudent);
-
 /**
  * @api {delete} /api/deleteEffort/:effortid Delete existing effort
  * @apiName Delete Effort
@@ -232,6 +231,5 @@ router.put('/api/updateStudent/:studentid', students.updateStudent);
  *
  */
 router.delete('/api/deleteEffort/:effortid', efforts.deleteEffort);
-//router.delete('/api/eff', efforts.deleteAllMyEfforts);
 
 module.exports = router;
