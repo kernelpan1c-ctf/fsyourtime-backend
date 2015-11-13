@@ -203,6 +203,7 @@ exports.updateEffort = function(req, res) {
 
     async.parallel([
 		function(callback) {
+            if(!efftypeId) callback();
             efforttypedb.effTypeModel.findById(efftypeId, function(err, result) {
                 if (err) {
                     return callback(err);
@@ -219,7 +220,7 @@ exports.updateEffort = function(req, res) {
         if(results.length == 2) {
             var updated = {};
             if (amount) updated.amount = amount;
-            if (efforttype) updated.type = efftypeId;
+            if (efftypeId) updated.type = efftypeId;
             if (!updated.length) res.status(500).send("No variables found to update");
             effortdb.effortModel.findOneAndUpdate({'_id': effId}, updated, function (err, result) {
                 if (err) res.status(500).send("Somthing went wrong");
