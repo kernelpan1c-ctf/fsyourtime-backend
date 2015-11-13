@@ -69,6 +69,7 @@ exports.login = function (req, res) {
             return callback(null, userinfo);
         },
         function(userInfo, callback) {
+            console.log(userInfo.sync);
             if(!userInfo.sync) {
                 logger.info("Syncdata was not checked. Skipping request for modules");
                 return callback(null, userInfo, null);

@@ -25,9 +25,9 @@ router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
  * @apiName Login
  * @apiGroup 01 General
  *
- * @apiParam username FSCampus Username
- * @apiParam password FSCampus Password
- * @apiParam syncdata If "true", modules will be fetched from efiport
+ * @apiParam {String} username FSCampus Username
+ * @apiParam {String} password FSCampus Password
+ * @apiParam {Boolean} syncdata If "true", modules will be fetched from efiport
  *
  * @apiParamExample {json} Example
  *    {
