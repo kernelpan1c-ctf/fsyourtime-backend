@@ -199,7 +199,8 @@ exports.createEffort = function(req, res) {
 exports.updateEffort = function(req, res) {
     var effId = req.params.effortid;
 	var efftypeId = req.body.efforttypeid;
-    var amount = req.amount;
+    var amount = req.body.amount;
+    console.log("Here is amount: " + amount);
 
     async.parallel([
 		function(callback) {
@@ -218,6 +219,7 @@ exports.updateEffort = function(req, res) {
         }
     ], function(err, results) {
         if (err) return res.send(500).send("I fucked this up :(");
+        console.log("Amount: " + amount);
         var updated = {};
         if (amount > 0) updated.amount = amount;
         if (efftypeId) updated.type = efftypeId;
