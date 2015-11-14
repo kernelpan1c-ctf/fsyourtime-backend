@@ -27,7 +27,7 @@ exports.getEffortsByStudent = function (req, res) {
             });
         },
         function(callback) {
-            effortdb.effortModel.find( { createdBy: studentId }, function(err, result) {
+            effortdb.effortModel.find( { createdBy: studentId }).populate('module', '_id name').exec(function(err, result) {
                 if(err) console.log(err);
                 else callback(null, result);
             });
