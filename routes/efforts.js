@@ -42,7 +42,7 @@ exports.getEffortsByStudent = function (req, res) {
 exports.getEffortById = function (req, res) {
     // Get an Effort by ID
     var effortid = req.params.effortid;
-    effortdb.effortModel.findById(effortid, function (err, effort) {
+    effortdb.effortModel.findById(effortid).populate('module', '_id name').exec(function (err, effort) {
         if (err) {
             console.log(err);
         } else {
