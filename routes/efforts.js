@@ -49,12 +49,9 @@ exports.getEffortById = function (req, res) {
         .populate('module', '_id name')
         .populate('type', '_id name')
         .exec(function (err, effort) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.status(200).send(effort);
-        }
-    });
+        if (err) console.log(err);
+        else res.status(200).send(effort);
+        });
 };
 
 exports.getEffortsByModule = function (req, res) {
@@ -88,10 +85,13 @@ exports.getEffortsByModule = function (req, res) {
             });
         },
         function(callback) {
-            effortdb.effortModel.find( { createdBy: studentId, module: moduleId }, function(err, result) {
-                if(err) console.log(err);
-                else callback(null, result);
-            });
+            effortdb.effortModel.find({createdBy: studentId, module: moduleId})
+                .populate('module', '_id name')
+                .populate('type', '_id name')
+                .exec(function (err, result) {
+                    if (err) console.log(err);
+                    else return callback(null, result);
+                });
         }
     ], function (err, result) {
         console.log("Done. Sending results.");
