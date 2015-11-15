@@ -27,7 +27,10 @@ exports.getEffortsByStudent = function (req, res) {
             });
         },
         function(callback) {
-            effortdb.effortModel.find( { createdBy: studentId }).populate('module', '_id name').exec(function(err, result) {
+            effortdb.effortModel.find( { createdBy: studentId })
+                .populate('module', '_id name')
+                .populate('type', '_id name')
+                .exec(function(err, result) {
                 if(err) console.log(err);
                 else callback(null, result);
             });
@@ -42,7 +45,10 @@ exports.getEffortsByStudent = function (req, res) {
 exports.getEffortById = function (req, res) {
     // Get an Effort by ID
     var effortid = req.params.effortid;
-    effortdb.effortModel.findById(effortid).populate('module', '_id name').exec(function (err, effort) {
+    effortdb.effortModel.findById(effortid)
+        .populate('module', '_id name')
+        .populate('type', '_id name')
+        .exec(function (err, effort) {
         if (err) {
             console.log(err);
         } else {
