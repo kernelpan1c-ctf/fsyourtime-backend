@@ -36,7 +36,7 @@ exports.login = function (req, res) {
             //require('request-debug')(request);
             logger.info("Requesting login from " + user + " - Sync?: " + sync);
             request({
-                'uri':'https://cert-campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + encodeURIComponent(pass),
+                'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + encodeURIComponent(pass),
                 'timeout':10000, //10 seconds timeout on login
                 'headers': {
                     'apiKey': 'd299ef13-a197-4c36-8948-e0112da3bdf2'
@@ -83,7 +83,7 @@ exports.login = function (req, res) {
             var cookie = "JSESSIONID="+userInfo.sessionid + "; SERVERID=fs-bl-02";
             //console.log(cookie);
             request({
-                uri: 'https://cert-campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
+                uri: 'https://campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
                 headers: {
                     "Cookie": cookie,
                     "apiKey": "d299ef13-a197-4c36-8948-e0112da3bdf2"
