@@ -41,7 +41,7 @@ exports.login = function (req, res) {
                     logger.info("Sending request. uri=" + uri + " headers=" + JSON.stringify(data.headers) + " method=" + data.method);
                 }
             });
-            logger.info("Requesting login from " + user + " - Sync?: " + sync);
+            logger.info("Requesting login from " + user + " - Sync?: " + sync, {user:user});
             request({
                 'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + encodeURIComponent(pass),
                 'timeout':10000, //10 seconds timeout on login
@@ -200,7 +200,7 @@ exports.login = function (req, res) {
                 }
             ], function(err, result) {
                 if(err) {
-                    console.log(err);
+                    //console.log(err);
                     return callback(null, userInfo);
                 }
                 else {
@@ -235,7 +235,7 @@ exports.login = function (req, res) {
                         mod.name = moduleinfo.m_name;
                         mod.save(function (err) {
                             if (err) {
-                                console.log(err);
+                                //console.log(err);
                                 return callback("Fucked UP!");
                             } else {
                                 var res = {'worked':true, 'added_module':mod._id};
@@ -251,7 +251,7 @@ exports.login = function (req, res) {
                 });
             }, function(err) {
                 if(err) {
-                    console.log(err);
+                    logger.error(err);
                 } else {
                     return callback(null, userinfo)
                 }
