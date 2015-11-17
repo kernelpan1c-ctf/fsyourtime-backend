@@ -23,10 +23,10 @@ app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(function (req, res, next) {
-  var flowid = uuid.v1();
+  req.params.flowid = uuid.v1();
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-  logger.info('Received ' + req.method + ' request from ' + ip + ' to '+ fullUrl, {uuid: flowid});
+  logger.info('Received ' + req.method + ' request from ' + ip + ' to '+ fullUrl, {flowid: req.params.flowid});
   next();
 });
 
