@@ -224,7 +224,7 @@ exports.updateEffort = function(req, res) {
 
         }
     ], function(err, results) {
-        if (err) return res.send(500).send("I fucked this up :(");
+        if (err) return res.status(500).send("I fucked this up :(");
         console.log("Amount: " + amount);
         var updated = {};
         if (amount > 0) updated.amount = amount;

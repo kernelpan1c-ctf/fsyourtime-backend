@@ -9,6 +9,7 @@ var request = require('request');
 var async = require('async');
 var crypto = require('crypto');
 var logger = require('../lib/logger').getLogger({'module': 'auth'});
+var reqLogger = require('../lib/logger').requestLogger();
 
 
 //TODO: Implement logging and replace "console.log" with logger
@@ -33,7 +34,10 @@ exports.login = function (req, res) {
         *
          */
         function(callback) {
-            //require('request-debug')(request);
+            require('request-debug')(request, function(type, data, r) {
+                //console.log(type, data, r);
+                reqLogger.debug("Sending request. uri=" + data.uri + " headers=" + JSON.stringify(data.headers) + " method=" +data.method);
+            });
             logger.info("Requesting login from " + user + " - Sync?: " + sync);
             request({
                 'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + encodeURIComponent(pass),
