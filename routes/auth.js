@@ -9,7 +9,7 @@ var request = require('request');
 var async = require('async');
 var crypto = require('crypto');
 var logger = require('../lib/logger').getLogger({'module': 'auth'});
-var reqLogger = require('../lib/logger').requestLogger();
+//var reqLogger = require('../lib/logger').requestLogger();
 
 
 //TODO: Implement logging and replace "console.log" with logger
@@ -36,7 +36,10 @@ exports.login = function (req, res) {
         function(callback) {
             require('request-debug')(request, function(type, data, r) {
                 //console.log(type, data, r);
-                reqLogger.debug("Sending request. uri=" + data.uri + " headers=" + JSON.stringify(data.headers) + " method=" +data.method);
+                if(type=='request') {
+                    var uri = data.uri.replace(/password=(.*)/g, 'password=**************');
+                    logger.info("Sending request. uri=" + uri + " headers=" + JSON.stringify(data.headers) + " method=" + data.method);
+                }
             });
             logger.info("Requesting login from " + user + " - Sync?: " + sync);
             request({
