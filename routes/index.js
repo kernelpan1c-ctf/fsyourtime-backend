@@ -13,8 +13,8 @@ var login = require('./auth.js');
 
 /*####### student ########*/
 router.get('/', function(req, res, next) {
-    res.send('you\'ve reached the index');
-    next();
+    res.status(200).send('<h1>Server is up and running</h1>');
+    //next();
 });
 
 router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
@@ -27,18 +27,20 @@ router.get('/loaderio-e2fcf49d2f9e042b5ae0b63c35d9241e', function(req, res) {
  *
  * @apiParam {String} username FSCampus Username
  * @apiParam {String} password FSCampus Password
- * @apiParam {Boolean} syncdata If "true", modules will be fetched from efiport
  *
  * @apiParamExample {json} Example
  *    {
  *      "username": "user",
- *      "password": "pass",
- *      "syncdata": true
+ *      "password": "pass"
  *    }
  *
- * @apiSuccess {String} id SessionID
- * @apiSuccess {Boolean} success True if login worked
- * @apiSuccess {Boolean} privacy True if the User has previously accepted privacy statement
+ * @apiSuccess {String} token Session ID
+ * @apiSuccess {Boolean} loginSuccess True if login worked
+ * @apiSuccess {Boolean} privacyFlag True if the User has previously accepted privacy statement
+ * @apiSuccess {String} implicitSync True if the data were synced with efiport
+ * @apiSuccess {String} campusUsername Username used for login
+ * @apiSuccess {String} userid User ID for future requests
+ * @apiSuccess {String} matricularnr Matrikular # of the student
  *
  */
 router.post('/login', login.login);
