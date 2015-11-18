@@ -8,6 +8,7 @@ var identdb = require('../models/Identification.js');
 var moduledb = require('../models/Module.js');
 var efforttypedb = require('../models/EffType.js');
 var async = require('async');
+var logger = require('../lib/logger').getLogger({module: 'efforts'});
 
 exports.getEffortsByStudent = function (req, res) {
     // Student can view a list of his efforts
@@ -15,11 +16,11 @@ exports.getEffortsByStudent = function (req, res) {
     var studentId = req.headers['x-key'];
     async.series([
         function(callback) {
-            console.log("Checking for student: " + studentId);
+            logger.info("Checking for student: " + studentId, {flowid: req.flowid});
             studdb.studentModel.count({ _id: studentId }, function(err, count) {
                 //console.log("Found: " + count);
                 if(count > 0) {
-                    console.log("Student found. Searching database for efforts.");
+                    logger.info("Student found. Searching database for efforts.", {flowid: req.flowid});
                     callback()
                 } else {
                     callback("Student not in Database!");
@@ -36,7 +37,6 @@ exports.getEffortsByStudent = function (req, res) {
             });
         }
     ], function (err, result) {
-        console.log("Done. Sending results.");
         if(err) res.status(500).send(err);
         else if(result) res.status(200).send(result[1]);
     });
@@ -206,7 +206,7 @@ exports.updateEffort = function(req, res) {
     var effId = req.params.effortid;
 	var efftypeId = req.body.efforttypeid;
     var amount = req.body.amount;
-    console.log("Here is amount: " + amount);
+    logger.info("Amount to update: " + amount, {flowid: req.flowid});
 
     async.parallel([
 		function(callback) {
@@ -224,7 +224,10 @@ exports.updateEffort = function(req, res) {
 
         }
     ], function(err, results) {
-        if (err) return res.status(500).send("I fucked this up :(");
+        if (err) {
+            logger.error(err, {flowid: req.flowid});
+            return res.status(500).send(err);
+        }
         console.log("Amount: " + amount);
         var updated = {};
         if (amount > 0) updated.amount = amount;

@@ -139,7 +139,7 @@ exports.login = function (req, res) {
             var modules = {};
 
             //console.log("in final function\n" + userInfo);
-            logger.info('Parsing student data for ' + userInfo.userid);
+            logger.info('Parsing student data for ' + userInfo.userid, {flowid: req.flowid});
             studentInfo.items.forEach(function(item) {
                 item.children.forEach(function(topLevelModule) {
                     if(topLevelModule.hasOwnProperty('children')) {
