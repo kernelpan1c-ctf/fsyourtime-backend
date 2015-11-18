@@ -15,6 +15,7 @@ var logger = require('../lib/logger').getLogger({'module': 'auth'});
 //TODO: Implement logging and replace "console.log" with logger
 
 exports.login = function (req, res) {
+    //console.log(req.flowid);
     //console.log(req);
     var user = req.body.username;
     var pass = req.body.password;
@@ -34,14 +35,15 @@ exports.login = function (req, res) {
         *
          */
         function(callback) {
+
             require('request-debug')(request, function(type, data, r) {
                 //console.log(type, data, r);
                 if(type=='request') {
                     var uri = data.uri.replace(/password=(.*)/g, 'password=**************');
-                    logger.info("Sending request. uri=" + uri + " headers=" + JSON.stringify(data.headers) + " method=" + data.method, {flowid: req.params.flowid});
+                    logger.info("Sending request. uri=" + uri + " headers=" + JSON.stringify(data.headers) + " method=" + data.method, {flowid: req.flowid});
                 }
             });
-            logger.info("Requesting login from " + user + " - Sync?: " + sync, {flowid:req.params.flowid});
+            logger.info("Requesting login from " + user + " - Sync?: " + sync, {flowid:req.flowid});
             request({
                 'uri':'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + encodeURIComponent(pass),
                 'timeout':10000, //10 seconds timeout on login
@@ -77,13 +79,13 @@ exports.login = function (req, res) {
         },
         function(userInfo, callback) {
             if(!userInfo.sync) {
-                logger.info("Syncdata was not checked. Skipping request for modules", {flowid: req.params.flowid});
+                logger.info("Syncdata was not checked. Skipping request for modules", {flowid: req.flowid});
                 return callback(null, userInfo, null);
             }
 
             //console.log('Backend Session ID: ' + userInfo.mySessionId);
             //console.log('Efiport Session ID: ' + userInfo.sessionid);
-            logger.info('Requesting Student Data for ' + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.params.flowid});
+            logger.info('Requesting Student Data for ' + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.flowid});
 
 
             var cookie = "JSESSIONID="+userInfo.sessionid + "; SERVERID=fs-bl-02";
@@ -99,11 +101,11 @@ exports.login = function (req, res) {
                     logger.error("Jesus christ I fucked up what the fuck is going on :O");
                     return callback("E0002");
                 }
-                logger.info("Student data for " + userInfo.userid + "[" + userInfo.campusUsername + "] arrived", {flowid: req.params.flowid});
                 var studentInfo = JSON.parse(body);
                 if(!studentInfo.success) {
                     return callback("E0002", body);
                 }
+                logger.info("Student data for " + userInfo.userid + "[" + userInfo.campusUsername + "] arrived", {flowid: req.flowid});
                 userInfo.matricularnr = studentInfo.matrikelnummer;
                 return callback(null, userInfo, studentInfo);
 
@@ -122,10 +124,10 @@ exports.login = function (req, res) {
                     //console.log(result);
                     //console.log(userInfo.sync);
                     if(!userInfo.sync) {
-                        logger.info("Created session for user " + userInfo.userid + " in database - " + userInfo.mySessionId, {flowid: req.params.flowid});
+                        logger.info("Created session for user " + userInfo.userid + " in database - " + userInfo.mySessionId, {flowid: req.flowid});
                         return callback("E0001", userInfo);
                     } else {
-                        logger.info("Created session for user " + userInfo.userid + " in database - " + userInfo.mySessionId, {flowid: req.params.flowid});
+                        logger.info("Created session for user " + userInfo.userid + " in database - " + userInfo.mySessionId, {flowid: req.flowid});
                         return callback(null, userInfo, studentInfo);
                     }
                 }
@@ -170,7 +172,7 @@ exports.login = function (req, res) {
                 function(callback) {
                     studentdb.studentModel.count({_id: userInfo.userid}, function(err, count) {
                         if(count > 0) {
-                            logger.info('Student + ' + userInfo.userid + ' already exists in database', {flowid: req.params.flowid});
+                            logger.warn('Student + ' + userInfo.userid + ' already exists in database', {flowid: req.flowid});
                             return callback("Student already exists");
                         } else {
                             return callback()
@@ -189,7 +191,7 @@ exports.login = function (req, res) {
                     studentEntry.modules = module_ids;
                     studentEntry.save(function (err, result) {
                         if (err) {
-                            logger.error("Failed to save student " + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.params.flowid});
+                            logger.error("Failed to save student " + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.flowid});
                             return callback("Failed to save student " + userInfo.userid + "[" + userInfo.campusUsername + "]");
                         } else {
                             userInfo.privacyFlag = result.privacyFlag;
@@ -203,7 +205,7 @@ exports.login = function (req, res) {
                     return callback(null, userInfo);
                 }
                 else {
-                    logger.info("Added Student "  + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.params.flowid});
+                    logger.info("Added Student "  + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.flowid});
                     return callback(null, result);
                 }
             });
@@ -243,9 +245,8 @@ exports.login = function (req, res) {
                         });
                     }
                 ], function(err, result) {
-                    //console.log(result);
-                    if(err) logger.error(err, {flowid: req.params.flowid});
-                    else if(result[1]['worked']) logger.info("Added Module " + result[1]['added_module'], {flowid: req.params.flowid});
+                    if(err) logger.warn(err, {flowid: req.flowid});
+                    else if(result[1]['worked']) logger.info("Added Module " + result[1]['added_module'], {flowid: req.flowid});
                     return callback();
                 });
             }, function(err) {
@@ -264,13 +265,13 @@ exports.login = function (req, res) {
         //console.log(result);
         if(err) {
             if(err == "E0000") {
-                logger.error("Wrong username or password", {flowid: req.params.flowid});
+                logger.error("Wrong username or password", {flowid: req.flowid});
                 res.status(403).send("Wrong Username or Password. Please try again.");
             }
             if(err == "E0001") {
                 studentdb.studentModel.findOne({_id: result.userid}, function(err, student) {
                     if(!student) {
-                        logger.error("Modules for user " + result.userid + " have not been synced yet.", {flowid: req.params.flowid});
+                        logger.error("Modules for user " + result.userid + " have not been synced yet.", {flowid: req.flowid});
                         res.status(500).send("Modules have not been synced yet. Please login again and check the 'syncdata' button");
                     }
                     if(student) {
@@ -285,7 +286,7 @@ exports.login = function (req, res) {
             }
             if(err == "E0002")
             {
-                logger.error("Efiport call failed. Response: " + result, {flowid: req.params.flowid});
+                logger.error("Efiport call failed. Response: " + result["message"], {flowid: req.flowid});
                 res.status(500).send("Failed to fetch Modules. Please login again. If the error persists, contact you Systemadministrator");
             }
             if(err == "E0003") res.status(500).send("Failed validate login against efiport.");
@@ -316,15 +317,15 @@ exports.logout = function (req, res) {
     logger.info("Received logout request for " + session.slice(0, 10) + "[...]")
     identdb.identificationModel.findOneAndRemove({jsession: session}, function(err, result){
         if(err) {
-            logger.error("Database connection failed", {flowid: req.params.flowid});
+            logger.error("Database connection failed", {flowid: req.flowid});
             res.status(500).send("Database connection failed");
         }
         if(!result) {
-            logger.error("Session " + session.slice(0, 10) + "[...] not found in database", {flowid: req.params.flowid})
+            logger.error("Session " + session.slice(0, 10) + "[...] not found in database", {flowid: req.flowid})
             res.status(404).send("Session " + session.slice(0, 10) + "[...] not found in database");
         }
         if(result) {
-            logger.info("User " + result.studentid + " successfully logged out", {flowid: req.params.flowid});
+            logger.info("User " + result.studentid + " successfully logged out", {flowid: req.flowid});
             return res.status(200).send('User ' + result.studentid + ' successfully logged out ');
         }
     });
