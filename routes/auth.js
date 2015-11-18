@@ -140,7 +140,7 @@ exports.login = function (req, res) {
                 function(err) {
                     if(!fsuser.apiSuccess) {
                         logger.error("Efiport call failed 10 times", {flowid: req.flowid});
-                        callback("Could not fetch modules. Please login again.");
+                        return callback("Could not fetch modules. Please login again.");
                     }
                     logger.info("Student data for " + fsuser.userid + "[" + fsuser.campusUsername + "] arrived", {flowid: req.flowid});
                     fsuser.matricularnr = fsuser.unparsedResponse.matrikelnummer;
