@@ -206,6 +206,7 @@ exports.updateEffort = function(req, res) {
     var effId = req.params.effortid;
 	var efftypeId = req.body.efforttypeid;
     var newAmount = req.body.amount;
+    var newDate = new Date(req.body.perfdate);
     logger.info("Amount to update: " + newAmount, {flowid: req.flowid});
 
     async.parallel([
@@ -231,6 +232,7 @@ exports.updateEffort = function(req, res) {
         var updated = {};
         if (newAmount > 0) updated.amount = newAmount;
         if (efftypeId) updated.type = efftypeId;
+        if (newDate) update.performanceDate = newDate;
         console.log(updated);
         //if (!updated.length) res.status(500).send("No variables found to update");
         logger.info("Searching Databas for effort " + effId, {flowid: req.flowid});
