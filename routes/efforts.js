@@ -232,7 +232,7 @@ exports.updateEffort = function(req, res) {
         var updated = {};
         if (newAmount > 0) updated.amount = newAmount;
         if (efftypeId) updated.type = efftypeId;
-        if (newDate) update.performanceDate = newDate;
+        if (newDate) updated.performanceDate = newDate;
         console.log(updated);
         //if (!updated.length) res.status(500).send("No variables found to update");
         logger.info("Searching Databas for effort " + effId, {flowid: req.flowid});
