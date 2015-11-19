@@ -211,7 +211,7 @@ exports.updateEffort = function(req, res) {
     async.parallel([
 		function(callback) {
             if(!efftypeId) return callback();
-            efforttypedb.effTypeModel.findById(efftypeId, function(err, result) {
+            efforttypedb.effTypeModel.findByIdAndUpdate(efftypeId, function(err, result) {
                 if (err) {
                     return callback(err);
                 }

@@ -66,10 +66,10 @@ exports.login = function (req, res) {
                         fsuser.loginSession = efiResponse.sessionid;
                         return callback(null, fsuser);
                     } else {
-                        return callback("E0000", userInfo);
+                        return callback({code:403, message:"Wrong username or password"});
                     }
                 } catch (e) {
-                    return callback("E0003", e);
+                    return callback({code:500, message:"Failed to parse Efiport response."});
                 }
             });
         },
@@ -81,7 +81,7 @@ exports.login = function (req, res) {
         },
         function (fsuser, callback) {
             studentdb.studentModel.findOne({_id: fsuser.userid}, function (err, student) {
-                if (err) res.status(500).send("Something went wrong. Please try again!");
+                if (err) return res.status(500).send("Something went wrong. Please try again!");
                 if (!student) {
                     fsuser.implicitSync = true;
                     callback(null, fsuser);
@@ -118,21 +118,16 @@ exports.login = function (req, res) {
                     }, function (err, response, body) {
                         if (err) {
                             tries++;
-                            //console.log("Failed. Try Again after 1 second " + fsuser.apiSuccess + " " + tries + " " + body);
-                            //logger.error("Efiport call failed. Response: " + body, {flowid: req.flowid});
                             setTimeout(callback(), 1000);
                         }
                         var studentInfo = JSON.parse(body);
                         if (!studentInfo.success) {
                             tries++;
-                            //console.log("Failed. Try Again after 1 second " + fsuser.apiSuccess + " " + tries + " " + studentInfo["message"]);
-                            //logger.error("Efiport call failed. Response: " + studentInfo["message"], {flowid: req.flowid});
                             setTimeout(callback(), 1000);
                         }
                         if (studentInfo.success) {
                             fsuser.unparsedResponse = studentInfo;
                             fsuser.apiSuccess = true;
-                            //console.log("It worked " + fsuser.apiSuccess + " " + tries);
                             callback();
                         }
                     });
@@ -140,7 +135,7 @@ exports.login = function (req, res) {
                 function(err) {
                     if(!fsuser.apiSuccess) {
                         logger.error("Efiport call failed 10 times", {flowid: req.flowid});
-                        return callback("Could not fetch modules. Please login again.");
+                        return callback({code:500, message:"Could not fetch modules. Please login again."});
                     }
                     logger.info("Student data for " + fsuser.userid + "[" + fsuser.campusUsername + "] arrived", {flowid: req.flowid});
                     fsuser.matricularnr = fsuser.unparsedResponse.matrikelnummer;
@@ -173,42 +168,8 @@ exports.login = function (req, res) {
                     delete fsuser.unparsedResponse;
                     return callback(null, fsuser);
                 }
-            );/*
-            logger.info("Student data for " + fsuser.userid + "[" + fsuser.campusUsername + "] arrived", {flowid: req.flowid});
-            fsuser.matricularnr = fsuser.unparsedResponse.matrikelnummer;
-
-            logger.info('Parsing student data for ' + fsuser.userid, {flowid: req.flowid});
-            fsuser.modules = {};
-            fsuser.unparsedResponse.items.forEach(function (item) {
-                item.children.forEach(function (topLevelModule) {
-                    if (topLevelModule.hasOwnProperty('children')) {
-                        topLevelModule.children.forEach(function (module) {
-                            var curYear = new Date();
-                            curYear = curYear.getFullYear();
-                            if (curYear - module.year < 3) {
-                                var idBuffer = new Buffer(module.title);
-                                var hashedIdBuffer = crypto.createHash('sha1').update(idBuffer).digest('hex');
-                                fsuser.modules[module.title] = {
-                                    'm_id': hashedIdBuffer,
-                                    'm_name': module.title,
-                                    'm_year': module.year,
-                                    'm_effort_assignment': module.assignments,
-                                    'm_effort_idependent': module.independenthours,
-                                    'm_effort_contact': module.contacthours,
-                                    'm_effort_total': module.workload
-                                };
-                            }
-                        });
-                    }
-                });
-            });
-            delete fsuser.unparsedResponse;
-            //console.log(fsuser);
-            return callback(null, fsuser);
-            process.exit(0);
-            */
+            );
         },
-        //TODO hier funktion für ident table
         function (fsuser, callback) {
             var identEntry = new identdb.identificationModel();
             identEntry.jsession = fsuser.token;
@@ -216,7 +177,7 @@ exports.login = function (req, res) {
             identEntry.save(function (err, result) {
                 if (err) {
                     logger.error(err, {flowid: req.flowid});
-                    return callback("Fucked UP!");
+                    return callback({code:500, message:"Failed to create new Session"});
                 } else {
                     logger.info("Created session for user " + fsuser.userid + " in database - " + fsuser.token, {flowid: req.flowid});
                     return callback(null, fsuser);
@@ -224,12 +185,11 @@ exports.login = function (req, res) {
             });
         },
         function (fsuser, callback) {
-            //console.log("here #1");
             if (!fsuser.implicitSync) {
                 logger.info("Student is already in sync. No new student will be added to database!", {flowid:req.flowid});
                 return callback(null, fsuser);
             }
-            //console.log(fsuser);
+
             var studentEntry = new studentdb.studentModel();
             studentEntry._id = fsuser.userid;
             studentEntry.matricularnr = fsuser.matricularnr;
@@ -242,57 +202,14 @@ exports.login = function (req, res) {
                 if (err) {
                     console.log(err);
                     logger.error("Failed to save student " + fsuser.userid + "[" + fsuser.campusUsername + "]", {flowid: req.flowid});
-                    return callback("Failed to save student " + fsuser.userid + "[" + fsuser.campusUsername + "]");
+                    return callback({code:500, message:"Failed to save student " + fsuser.userid + "[" + fsuser.campusUsername + "]"});
                 } else {
                     fsuser.privacyFlag = result.privacyFlag;
                     return callback(null, fsuser);
                 }
             });
-            /*
-             async.series([
-             function(callback) {
-             studentdb.studentModel.count({_id: fsuser.userid}, function(err, count) {
-             if(count > 0) {
-             logger.warn('Student + ' + fsuser.userid + ' already exists in database', {flowid: req.flowid});
-             return callback("Student already exists");
-             } else {
-             return callback()
-             }
-             });
-             },
-             function (callback) {
-             var studentEntry = new studentdb.studentModel();
-             studentEntry._id = userInfo.userid;
-             studentEntry.matricularnr = userInfo.matricularnr;
-             var module_ids = [];
-             for(var module_item in userInfo.modules) {
-             module_ids.push(userInfo.modules[module_item].m_id);
-             }
-             studentEntry.modules = module_ids;
-             studentEntry.save(function (err, result) {
-             if (err) {
-             logger.error("Failed to save student " + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.flowid});
-             return callback("Failed to save student " + userInfo.userid + "[" + userInfo.campusUsername + "]");
-             } else {
-             userInfo.privacyFlag = result.privacyFlag;
-             return callback(null, userInfo);
-             }
-             });
-             }
-             ], function(err, result) {
-             if(err) {
-             //console.log(err);
-             return callback(null, userInfo);
-             }
-             else {
-             logger.info("Added Student "  + userInfo.userid + "[" + userInfo.campusUsername + "]", {flowid: req.flowid});
-             return callback(null, result);
-             }
-             });*/
-
         },
         function (fsuser, callback) {
-            //console.log("Here #2")
             if (!fsuser.implicitSync) {
                 logger.info("Student is already in sync. No new modules will be added to database!", {flowid:req.flowid});
                 callback(null, fsuser);
@@ -318,7 +235,7 @@ exports.login = function (req, res) {
                         mod.name = moduleinfo.m_name;
                         mod.save(function (err) {
                             if (err) {
-                                return callback("Fucked UP!");
+                                return callback({code:500, message:"Fucked UP!"});
                             } else {
                                 var res = {'worked': true, 'added_module': mod._id};
                                 return callback(null, res);
@@ -342,47 +259,21 @@ exports.login = function (req, res) {
     ], function (err, result) {
         if (err) {
             logger.error(err, {flowid: req.flowid});
-            res.status(400).send(err);
+            return res.status(err.code).send(err.message);
         }
-        /*
-         if(err == "E0000") {
-         logger.error("Wrong username or password", {flowid: req.flowid});
-         res.status(403).send("Wrong Username or Password. Please try again.");
-         }
-         if(err == "E0001") {
-         studentdb.studentModel.findOne({_id: result.userid}, function(err, student) {
-         if(!student) {
-         logger.error("Modules for user " + result.userid + " have not been synced yet.", {flowid: req.flowid});
-         res.status(500).send("Modules have not been synced yet. Please login again and check the 'syncdata' button");
-         }
-         if(student) {
-         result.privacy = student.privacyFlag;
-         result.matricularnr = student.matricularnr;
-         res.status(200).send(result);
-         }
-         });
-         }
-         if(err == "E0002")
-         {
-         logger.error("Efiport call failed. Response: " + result["message"], {flowid: req.flowid});
-         res.status(500).send("Failed to fetch Modules. Please login again. If the error persists, contact you Systemadministrator");
-         }
-         if(err == "E0003") res.status(500).send("Failed validate login against efiport.");
-        */
-         if (result) {
-             if (result.length > 1) result = result[1];
-             delete result.modules;
-             delete result.loginSession;
-             res.status(200).send(result);
+        if (result) {
+            if (result.length > 1) result = result[1];
+            delete result.modules;
+            delete result.loginSession;
+            return res.status(200).send(result);
          }
 
     });
 }
 
 exports.logout = function (req, res) {
-    //console.log(req);
     var session = req.headers['x-session'];
-    logger.info("Received logout request for " + session.slice(0, 10) + "[...]")
+    logger.info("Received logout request for " + session.slice(0, 10) + "[...]");
     identdb.identificationModel.findOneAndRemove({jsession: session}, function(err, result){
         if(err) {
             logger.error("Database connection failed", {flowid: req.flowid});
