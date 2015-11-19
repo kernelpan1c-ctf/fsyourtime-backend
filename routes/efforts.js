@@ -205,13 +205,13 @@ exports.createEffort = function(req, res) {
 exports.updateEffort = function(req, res) {
     var effId = req.params.effortid;
 	var efftypeId = req.body.efforttypeid;
-    var amount = req.body.amount;
-    logger.info("Amount to update: " + amount, {flowid: req.flowid});
+    var newAmount = req.body.amount;
+    logger.info("Amount to update: " + newAmount, {flowid: req.flowid});
 
     async.parallel([
 		function(callback) {
-            if(!efftypeId) return callback();
-            efforttypedb.effTypeModel.findByIdAndUpdate(efftypeId, function(err, result) {
+            //if(!efftypeId) return callback();
+            effortdb.effortModel.findByIdAndUpdate(effId, function(err, result) {
                 if (err) {
                     return callback(err);
                 }
