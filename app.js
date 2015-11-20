@@ -100,9 +100,13 @@ app.use(function(err, req, res, next) {
   });
 });
 
-https.createServer({
-  key: fs.readFileSync('../certs/server.key.plain'),
-  cert: fs.readFileSync('../certs/server.crt')
-}, app).listen(port);
+try {
+  https.createServer({
+    key: fs.readFileSync('../certs/server.key.plain'),
+    cert: fs.readFileSync('../certs/server.crt')
+  }, app).listen(port);
+} catch(e) {
+  app.listen(port);
+}
 
 console.log('Server listening on port: ' + port);
