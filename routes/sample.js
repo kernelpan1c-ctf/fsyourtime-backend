@@ -60,9 +60,9 @@ exports.createSampleEfforts = function(req, res) {
             function(callback) {
                 var newEffort = new effortdb.effortModel();
                 newEffort.amount = Math.floor(Math.random()*50+1);
-                newEffort.module = result[1][Math.floor(Math.random()*result[0].length+1)]
-                newEffort.createdBy = result[1][Math.floor(Math.random()*result[0].length+1)]
-                newEffort.type = result[2][Math.floor(Math.random()*result[0].length+1)]
+                newEffort.module = result[1][Math.floor(Math.random()*result[1].length)];
+                newEffort.createdBy = result[0][Math.floor(Math.random()*result[0].length)];
+                newEffort.type = result[2][Math.floor(Math.random()*result[2].length)];
                 newEffort.performanceDate = new Date(Date.now());
                 newEffort.save(function(err, result) {
                     if(err) {
