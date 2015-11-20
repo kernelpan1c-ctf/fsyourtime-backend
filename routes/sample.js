@@ -2,16 +2,89 @@
  * Created by Kevin on 10/8/15.
  */
 
-var mongoose = require("mongoose");
 var studentdb = require('../models/Student.js');
-var modules = require('./modules.js');
-//var coursedb = require('../models/Course.js');
 var moduledb = require('../models/Module.js');
 var effortdb = require('../models/Effort.js');
-//var effortCatdb = require('../models/EffCategory.js');
-//var db = require('../db');
+var efftypedb = require('../models/EffType');
+var async = require('async');
 
+exports.createSampleEfforts = function(req, res) {
+    var numSamples = req.params.sets;
+    async.parallel([
+        function(callback) {
+            var studentIDs = [];
+            studentdb.studentModel.find({}, function(err, students) {
+                if(err) console.log(err)
+                if(students.length > 0) {
+                    students.forEach(function(student) {
+                        studentIDs.push(student._id);
+                    })
+                }
+                callback(null, studentIDs);
+            });
 
+        },
+        function(callback) {
+            var moduleIDs = [];
+            moduledb.moduleModel.find({}, function(err, modules) {
+                if(err) console.log(err);
+                if(modules.length > 0) {
+                    modules.forEach(function(module) {
+                        moduleIDs.push(module._id);
+                    })
+                }
+                callback(null, moduleIDs);
+            });
+
+        },
+        function(callback) {
+            var effTypeIDs = [];
+            efftypedb.effTypeModel.find({}, function(err, effTypes) {
+                if(effTypes.length > 0) {
+                    effTypes.forEach(function(effType) {
+                        effTypeIDs.push(effType._id);
+                    })
+                }
+                callback(null, effTypeIDs);
+            });
+
+        }
+    ], function(err, result) {
+        console.log(numSamples);
+        console.log(result[0]);
+        console.log(result[1]);
+        console.log(result[2]);
+        var i = 0;
+        async.whilst(
+            function() { return i <= numSamples},
+            function(callback) {
+                var newEffort = new effortdb.effortModel();
+                newEffort.amount = Math.floor(Math.random()*50+1);
+                newEffort.module = result[1][Math.floor(Math.random()*result[0].length+1)]
+                newEffort.createdBy = result[1][Math.floor(Math.random()*result[0].length+1)]
+                newEffort.type = result[2][Math.floor(Math.random()*result[0].length+1)]
+                newEffort.performanceDate = new Date(Date.now());
+                newEffort.save(function(err, result) {
+                    if(err) {
+                        callback(err);
+                    } else if(result) {
+                        var message = {};
+                        message.success = true;
+                        message.id = result._id;
+                        console.log("Created effort " + message.id);
+                        i++;
+                        callback();
+                    }
+                })
+            }, function(err, result) {
+                if(err) console.log(err);
+                res.status(200).send("Created " + numSamples + " sample data");
+            });
+
+    });
+}
+
+/*
 exports.createSampleData = function (req, res) {
 
     console.log('Removing Collections...');
@@ -93,3 +166,4 @@ exports.createSampleData = function (req, res) {
 
     res.send('Yay we are done!');
 }
+*/

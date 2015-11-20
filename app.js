@@ -7,6 +7,7 @@ var logger = require('./lib/logger').getLogger({'module': 'server'});
 var uuid = require('uuid');
 var fs = require('fs');
 var https = require('https');
+var conf = require('./config.js');
 
 //var path = require('path');
 //var favicon = require('serve-favicon');
@@ -17,7 +18,7 @@ var https = require('https');
 var bodyParser = require('body-parser');
 
 //import routes and configuration
-var dbConf = require('./db');
+var dbConf = require('./config');
 var routes = require('./routes/index');
 
 // ---[ SETUP MIDDLEWARE ]---
@@ -52,11 +53,11 @@ app.all('/*', function (req, res, next) {
 // ---[ MONGODB SETUP ]---
 //Temporarily MongoLab is used
 
-mongoose.connect(dbConf.url);
+mongoose.connect(dbConf.dbUrl);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
 db.once('open', function () {
-  console.log('Connected to MongoDB: ' + dbConf.url);
+  console.log('Connected to MongoDB: ' + dbConf.dbUrl);
 });
 
 // ---[ REGISTER ROUTES ]---
@@ -99,14 +100,19 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
 var proto = "http";
-try {
-  https.createServer({
-    key: fs.readFileSync('../certs/server.key'),
-    cert: fs.readFileSync('../certs/server.crt')
-  }, app).listen(port);
-  proto = 'https';
-} catch(e) {
+if(conf.useHttps) {
+  try {
+    https.createServer({
+      key: fs.readFileSync(conf.sslKeyLocation),
+      cert: fs.readFileSync(conf.sslCertLocation)
+    }, app).listen(port);
+    proto = 'https';
+  } catch (e) {
+    app.listen(port);
+  }
+} else {
   app.listen(port);
 }
 

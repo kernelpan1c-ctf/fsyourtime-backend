@@ -9,10 +9,7 @@ var request = require('request');
 var async = require('async');
 var crypto = require('crypto');
 var logger = require('../lib/logger').getLogger({'module': 'auth'});
-//var reqLogger = require('../lib/logger').requestLogger();
-
-
-//TODO: Implement logging and replace "console.log" with logger
+var conf = require('../config.js');
 
 exports.login = function (req, res) {
     //console.log(req.flowid);
@@ -53,7 +50,7 @@ exports.login = function (req, res) {
         function (fsuser, callback) {
             logger.info("Requesting login from " + user, {flowid: req.flowid});
             request({
-                'uri': 'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + user + '&password=' + encodeURIComponent(pass),
+                'uri': conf.loginUrl(user, pass),
                 'timeout': 10000, //10 seconds timeout on login
                 'headers': {
                     'apiKey': 'd299ef13-a197-4c36-8948-e0112da3bdf2'
@@ -110,7 +107,7 @@ exports.login = function (req, res) {
                     var cookie = "JSESSIONID=" + fsuser.loginSession + "; SERVERID=fs-bl-02";
                     //console.log(cookie);
                     request({
-                        uri: 'https://campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
+                        uri: conf.studentInfoUrl,
                         headers: {
                             "Cookie": cookie,
                             "apiKey": "d299ef13-a197-4c36-8948-e0112da3bdf2"

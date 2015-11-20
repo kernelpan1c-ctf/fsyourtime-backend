@@ -56,7 +56,7 @@ router.post('/logout', login.logout);
 // no Apidoc
 router.get('/api/students/', students.checkStudent);
 // no Apidoc
-router.get('/sample/create', sample.createSampleData);
+router.get('/sample/create/:sets', sample.createSampleEfforts);
 /**
  * @api {get} /api/modules/student/ Get all Modules per Student
  * @apiName GetModules
