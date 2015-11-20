@@ -50,10 +50,6 @@ exports.createSampleEfforts = function(req, res) {
 
         }
     ], function(err, result) {
-        console.log(numSamples);
-        console.log(result[0]);
-        console.log(result[1]);
-        console.log(result[2]);
         var i = 0;
         async.whilst(
             function() { return i <= numSamples},
@@ -71,7 +67,8 @@ exports.createSampleEfforts = function(req, res) {
                         var message = {};
                         message.success = true;
                         message.id = result._id;
-                        console.log("Created effort " + message.id);
+                        if(i%200==0) console.log("Creating efforts " + i + "/" + numSamples),
+                        //console.log("Created effort " + message.id);
                         i++;
                         callback();
                     }
