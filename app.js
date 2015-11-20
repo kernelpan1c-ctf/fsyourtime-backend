@@ -101,8 +101,8 @@ app.use(function(err, req, res, next) {
 });
 
 https.createServer({
-  key: fs.readFileSync('/Users/Kevin/Docker Container/certs/server.key.plain'),
-  cert: fs.readFileSync('/Users/Kevin/Docker Container/certs/server.crt')
+  key: fs.readFileSync('../certs/server.key.plain'),
+  cert: fs.readFileSync('../certs/server.crt')
 }, app).listen(port);
 
 console.log('Server listening on port: ' + port);
