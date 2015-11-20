@@ -102,7 +102,7 @@ app.use(function(err, req, res, next) {
 var proto = "http";
 try {
   https.createServer({
-    key: fs.readFileSync('../certs/server.key.plain'),
+    key: fs.readFileSync('../certs/server.key'),
     cert: fs.readFileSync('../certs/server.crt')
   }, app).listen(port);
   proto = 'https';
