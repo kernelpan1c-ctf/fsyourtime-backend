@@ -99,14 +99,15 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
+var proto = "http";
 try {
   https.createServer({
     key: fs.readFileSync('../certs/server.key.plain'),
     cert: fs.readFileSync('../certs/server.crt')
   }, app).listen(port);
+  proto = 'https';
 } catch(e) {
   app.listen(port);
 }
 
-console.log('Server listening on port: ' + port);
+console.log('Server listening on port: ' + port + ' [' + proto + ']');
