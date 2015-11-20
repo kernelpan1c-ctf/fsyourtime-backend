@@ -5,6 +5,8 @@ var app = express();
 var mongoose = require('mongoose');
 var logger = require('./lib/logger').getLogger({'module': 'server'});
 var uuid = require('uuid');
+var fs = require('fs');
+var https = require('https');
 
 //var path = require('path');
 //var favicon = require('serve-favicon');
@@ -98,6 +100,9 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.listen(port);
+https.createServer({
+  key: fs.readFileSync('/Users/Kevin/Docker Container/certs/server.key.plain'),
+  cert: fs.readFileSync('/Users/Kevin/Docker Container/certs/server.crt')
+}, app).listen(port);
 
 console.log('Server listening on port: ' + port);

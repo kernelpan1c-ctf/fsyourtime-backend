@@ -233,12 +233,14 @@ exports.updateEffort = function(req, res) {
         if (newAmount > 0) updated.amount = newAmount;
         if (efftypeId) updated.type = efftypeId;
         if (newDate) updated.performanceDate = newDate;
-        console.log(updated);
         //if (!updated.length) res.status(500).send("No variables found to update");
         logger.info("Searching Databas for effort " + effId, {flowid: req.flowid});
         effortdb.effortModel.findOneAndUpdate({'_id': effId}, updated, function (err, result) {
             if (err) res.status(500).send("Something went wrong");
-            else if (result) res.status(200).send({'success': true});
+            else if (result) {
+                logger.info("Effort updated.", {flowid: req.flowid})
+                res.status(200).send({'success': true});
+            }
         });
     });
 };
