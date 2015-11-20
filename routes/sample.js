@@ -67,7 +67,7 @@ exports.createSampleEfforts = function(req, res) {
                         var message = {};
                         message.success = true;
                         message.id = result._id;
-                        if(i%200==0) console.log("Creating efforts " + i + "/" + numSamples),
+                        if(i%5000==0) console.log("Creating efforts " + i + "/" + numSamples);
                         //console.log("Created effort " + message.id);
                         i++;
                         callback();
@@ -75,6 +75,7 @@ exports.createSampleEfforts = function(req, res) {
                 })
             }, function(err, result) {
                 if(err) console.log(err);
+                console.log("Done.");
                 res.status(200).send("Created " + numSamples + " sample data");
             });
 
