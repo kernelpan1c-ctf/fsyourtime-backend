@@ -9,6 +9,7 @@ var efforts = require('./efforts.js');
 var efftypes = require('./efftypes.js');
 var sample = require('./sample.js');
 var login = require('./auth.js');
+var compare = require('./compare.js');
 
 
 /*####### student ########*/
@@ -57,6 +58,24 @@ router.post('/logout', login.logout);
 router.get('/api/students/', students.checkStudent);
 // no Apidoc
 router.get('/sample/create/:sets', sample.createSampleEfforts);
+/**
+ * @api {get} /api/compare/module/:moduleid Compare a Student in a Module
+ * @apiName Compare By Module
+ * @apiGroup 05 Compare
+ *
+ * @apiSuccess {Object[]} topthree Array of best three students: {_id (String, DO NOT USE!), sum (Integer, sum of amounts)} // if less than 3 students found: "Not enough participants"
+ * @apiSuccess {Object[]} bottomthree Array of worst three students: {_id (String, DO NOT USE!), sum (Integer, sum of amounts)} // if less than 3 students found: "Not enough participants"
+ * @apiSuccess {Object} module Information about the module
+ * @apiSuccess {Object[]} me Array of 1 length: {_id (null), sum (Integer, sum of amounts)} // [] if student did not book any efforts in this module yet
+ * @apiSuccess {Object[]} average Array of 1 length: {_id (null), sum (Integer, sum of amounts)} // [] if no one booked any efforts in this module yet
+ *
+ * @apiHeader x-session Session ID
+ * @apiHeader x-key User ID (NOT Matricular-#!)
+ *
+ * @apiParam {String} moduleid ID of module
+ *
+ */
+router.get('/api/compare/module/:moduleid', compare.compareByModule);
 /**
  * @api {get} /api/modules/student/ Get all Modules per Student
  * @apiName GetModules
