@@ -67,7 +67,7 @@ exports.createSampleEfforts = function(req, res) {
                         var message = {};
                         message.success = true;
                         message.id = result._id;
-                        if(i%5000==0) console.log("Creating efforts " + i + "/" + numSamples);
+                        if(i%1000==0) console.log("Creating efforts " + i + "/" + numSamples + "\r");
                         //console.log("Created effort " + message.id);
                         i++;
                         callback();
