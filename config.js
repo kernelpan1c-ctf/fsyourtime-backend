@@ -1,8 +1,8 @@
 module.exports = {
     dbUrl: 'mongodb://localhost/fsyourtime',
-    useHttps: false,
+    useHttps: true,
     loginUrl: function(username, password) { return 'https://campus.frankfurt-school.de/clicnetclm/loginService.do?xaction=login&username=' + username + '&password=' + encodeURIComponent(password) },
     studentInfoUrl: 'https://campus.frankfurt-school.de/clicnetclm/campusAppStudentX.do?xaction=getStudentData',
-    sslKeyLocation: null,
-    sslCertLocation: null
+    sslKeyLocation: '../certs/server.key',
+    sslCertLocation: '../certs/server.crt'
 };
