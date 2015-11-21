@@ -206,7 +206,7 @@ exports.updateEffort = function(req, res) {
     var effId = req.params.effortid;
 	var efftypeId = req.body.efforttypeid;
     var newAmount = req.body.amount;
-    var newDate = new Date(req.body.perfdate);
+    var newDate = req.body.perfdate ? new Date(req.body.perfdate) : new Date();
     logger.info("Amount to update: " + newAmount, {flowid: req.flowid});
 
     async.parallel([
