@@ -61,6 +61,8 @@ exports.login = function (req, res) {
                     if (efiResponse.success) {
                         fsuser.loginSuccess = true;
                         fsuser.loginSession = efiResponse.sessionid;
+                        fsuser.cookie = response.headers['set-cookie'][2].split(';')[0] + "; " + response.headers['set-cookie'][3].split(';')[0];
+                        logger.info("Received Session: " + fsuser.loginSession);
                         return callback(null, fsuser);
                     } else {
                         return callback({code:403, message:"Wrong username or password"});
@@ -104,12 +106,12 @@ exports.login = function (req, res) {
             async.whilst(
                 function() { return (tries < 1 && !fsuser.apiSuccess) },
                 function(callback) {
-                    var cookie = "JSESSIONID=" + fsuser.loginSession + "; SERVERID=fs-bl-02";
+                    //var cookie = "JSESSIONID=" + fsuser.loginSession + "; SERVERID=fs-bl-02";
                     //console.log(cookie);
                     request({
                         uri: conf.studentInfoUrl,
                         headers: {
-                            "Cookie": cookie,
+                            "Cookie": fsuser.cookie,
                             "apiKey": "d299ef13-a197-4c36-8948-e0112da3bdf2"
                         }
                     }, function (err, response, body) {
@@ -131,7 +133,7 @@ exports.login = function (req, res) {
                 },
                 function(err) {
                     if(!fsuser.apiSuccess) {
-                        logger.error("Efiport call failed 10 times", {flowid: req.flowid});
+                        logger.error("Efiport call failed", {flowid: req.flowid});
                         return callback({code:500, message:"Could not fetch modules. Please login again."});
                     }
                     logger.info("Student data for " + fsuser.userid + "[" + fsuser.campusUsername + "] arrived", {flowid: req.flowid});
