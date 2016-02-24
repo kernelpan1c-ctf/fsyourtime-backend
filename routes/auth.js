@@ -10,7 +10,28 @@ var async = require('async');
 var crypto = require('crypto');
 var logger = require('../lib/logger').getLogger({'module': 'auth'});
 var conf = require('../config.js');
-
+/**
+ *
+ * @param req
+ * @param res
+ *
+ * This function combines various functions
+ * 1. The user login is validated against the efiport API
+ * 2. If the Login is successful, a new sessionkey is created and stored in the database.
+ * 3. The database is queried to check whether the student already exists.
+ * 4. If the Student exists, a flag is set and the following steps are skipped.
+ * 5. The previous login is used to query the Efiport API for the Student data
+ * 6. The student data is parsed and saved in the fsyourtime database
+ * 7. The Answercode contains information if the login and sync was successful.
+ * 8. If any of the previous steps fail, NO student is created in the fsyourtime database and the user has to login again
+ *
+ * The function combines numerous "waterfall" data structures. This is due to the asynchronous nature of Node.js
+ * By using the waterfall structure, a synchronous dataflow can be achieved. The waterfall is part of the aysnc package.
+ * For further information, please refer to the package's documentation
+ *
+ * Magic might be involved here.
+ *
+ */
 exports.login = function (req, res) {
     //console.log(req.flowid);
     //console.log(req);
@@ -42,9 +63,10 @@ exports.login = function (req, res) {
             var fsuser = {};
             fsuser.campusUsername = user;
             var userid = new Buffer(fsuser.campusUsername);
+
+            //The hashed username is used as userid in the fsyourtime database
             var hashedUserid = crypto.createHash('md5').update(userid).digest('hex').toUpperCase();
             fsuser.userid = hashedUserid;
-            //console.log(fsuser);
             callback(null, fsuser);
         },
         function (fsuser, callback) {
